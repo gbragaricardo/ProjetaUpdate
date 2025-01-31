@@ -5,12 +5,283 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ProjetaUpdate"
         mc:Ignorable="d"
-        Title="MainWindow" 
-        Height="600" 
-        Width="920"
+        WindowStyle="None"
+        Height="590" 
+        Width="825"
+        ResizeMode="NoResize"
+        Background="Transparent"
+        AllowsTransparency="True"
         >
-    <Border Background="#DB0F19"
-            >
+    
+    <Border Padding="0"
+            CornerRadius="10">
+        <Border.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#DB0F19" Offset="0"/>
+                <GradientStop Color="#7A020A" Offset="0.7"/>
+                <GradientStop Color="#200000" Offset="1"/>
+            </LinearGradientBrush>
+        </Border.Background>
         
+
+        <!-- Grid Geral-->
+        <Grid>
+            <Grid.RowDefinitions>
+                <!-- Barra personalizada -->
+                <RowDefinition Height="50"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <Border Background="#4C0105"
+                    Grid.Row="0"
+                    MouseLeftButtonDown="BorderArrasto_Pressionado"
+                    CornerRadius="10 10 0 0">
+                <Border.Effect>
+                    <DropShadowEffect Color="Black" 
+                      Direction="320" 
+                      ShadowDepth="5" 
+                      BlurRadius="10" 
+                      Opacity="0.5"/>
+                </Border.Effect>
+
+                <!-- Botão Fechar -->
+                <Border Grid.Row="0"
+                        Margin="0 0 20 0"
+                        Width="30" Height="30"
+                        HorizontalAlignment="Right"
+                        Background="#DB0F19"
+                        CornerRadius="5">
+
+                    <Border.Effect>
+                        <DropShadowEffect Color="Black" 
+                        Direction="320" 
+                        ShadowDepth="5" 
+                        BlurRadius="10" 
+                        Opacity="0.5"/>
+                    </Border.Effect>
+
+                    <Button Content="X" 
+                            FontSize="14"
+                            Click="FecharApp"
+                            Style="{StaticResource NormalButtonSelect}"/>
+                </Border>
+                <!-- Botão Fechar -->
+                
+            </Border>
+            <!-- Fim Row Window-->
+
+            
+            
+            <!-- Grid Conteudo-->
+            <Grid Grid.Row="1"
+                  Margin="20">
+                
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="100"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+
+                <Image Grid.Row="0"                 
+                       Source="Images/logo-branca.png"
+                       Stretch="Uniform"
+                       Width="200"
+                       Margin="0 0 0 0"/>
+            <!-- Fim Row Logo-->
+
+                <!-- Grid Duas Linhas-->
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <Border Padding="0 50">
+                        <StackPanel>
+                            <Border Height="50"
+                                    CornerRadius="5"
+                                    Style="{StaticResource BorderPressed}">
+                                
+
+                                <RadioButton Content="PROJETA HDR" 
+                                             FontSize="16"
+                                             FontFamily="pack://application:,,,/Fonts/#Barlow"
+                                             Style="{StaticResource MenuButtonTheme}"
+                                              PreviewMouseLeftButtonDown="BotaoProjetaHDR_PreviewMouseLeftButtonDown"
+                                             Checked="ProjetaHDR_Checked"
+                                             Unchecked="ProjetaHDR_Unchecked"
+
+                                             x:Name="BotaoProjetaHDR"/>
+                            </Border>
+
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Column="1"
+                            Padding="20 50">
+
+                        <StackPanel VerticalAlignment="Top"
+                                    Visibility="Hidden"
+                                    x:Name="ProjetaHDRContent">
+
+                            <Grid Height="100"
+                                  Margin="0 0 0 50">
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Border 
+                                        Grid.Column="0"
+                                        Margin= "0 0 15 0"
+                                        Background="#4C0105"
+                                        CornerRadius="5">
+
+                                    <Border.Effect>
+                                        <DropShadowEffect Color="Black" 
+                                                          Direction="320" 
+                                                          ShadowDepth="5" 
+                                                          BlurRadius="10" 
+                                                          Opacity="0.5"/>
+
+                                    </Border.Effect>
+                                    <StackPanel>
+                                        
+                                    
+                                        <TextBlock VerticalAlignment="Center"
+                                                   HorizontalAlignment="Center"
+                                                   Padding="15"
+                                                   FontSize="16"
+                                                   Foreground="White"
+                                                   FontFamily="pack://application:,,,/Fonts/#Barlow"
+                                                   Text="ULTIMA VERSAO" />
+
+                                        <TextBlock VerticalAlignment="Center"
+                                                   HorizontalAlignment="Center"
+                                                   Padding="15"
+                                                   FontSize="16"
+                                                   Foreground="White"
+                                                   FontFamily="pack://application:,,,/Fonts/#Barlow"
+                                                   Text="XXX.XXX" />
+                                    </StackPanel>
+                                </Border>
+
+                                
+                                <Border 
+                                        Grid.Column="1"
+                                        Margin= "15 0 0 0"
+                                        Background="#4C0105"
+                                        CornerRadius="5">
+
+                                    <Border.Effect>
+                                        <DropShadowEffect Color="Black" 
+                                                          Direction="320" 
+                                                          ShadowDepth="5" 
+                                                          BlurRadius="10" 
+                                                          Opacity="0.5"/>
+
+                                    </Border.Effect>
+                                    <StackPanel>
+
+
+                                        <TextBlock VerticalAlignment="Center"
+                                                   HorizontalAlignment="Center"
+                                                   Padding="15"
+                                                   FontSize="16"
+                                                   Foreground="White"
+                                                   FontFamily="pack://application:,,,/Fonts/#Barlow"
+                                                   Text="VERSÂO ATUAL" />
+
+                                        <TextBlock VerticalAlignment="Center"
+                                                   HorizontalAlignment="Center"
+                                                   Padding="15"
+                                                   FontSize="16"
+                                                   Foreground="White"
+                                                   FontFamily="pack://application:,,,/Fonts/#Barlow"
+                                                   Text="XXX.XXX" />
+                                    </StackPanel>
+                                </Border>
+
+                            </Grid>
+
+                            <Grid Height="100">
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Border 
+                                        Grid.Column="0"
+                                        Margin= "0 0 15 0"
+                                        Background="#4C0105"
+                                        CornerRadius="5">
+
+                                    <Border.Effect>
+                                        <DropShadowEffect Color="Black" 
+                                                          Direction="320" 
+                                                          ShadowDepth="5" 
+                                                          BlurRadius="10" 
+                                                          Opacity="0.5"/>
+
+                                    </Border.Effect>
+ 
+                                        <Button Content="INSTALAR"
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Center"
+                                                FontFamily="pack://application:,,,/Fonts/#Barlow"
+                                                FontSize="16"
+                                                Height="100" 
+                                                Width="258"
+                                                Style="{StaticResource NormalButtonSelect}"
+                                                />
+                                    
+                                </Border>
+
+
+                                <Border 
+                                       Grid.Column="1"
+                                       Margin= "15 0 0 0"
+                                       Background="#4C0105"
+                                       CornerRadius="5">
+
+                                    <Border.Effect>
+                                        <DropShadowEffect Color="Black" 
+                                                          Direction="320" 
+                                                          ShadowDepth="5" 
+                                                          BlurRadius="10" 
+                                                          Opacity="0.5"/>
+
+                                    </Border.Effect>
+                                    <StackPanel>
+
+
+                                        <Button Content="ATUALIZAR"
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Center"                                                                                      
+                                                FontFamily="pack://application:,,,/Fonts/#Barlow"
+                                                FontSize="16"                          
+                                                Height="100" 
+                                                Width="258"
+                                                Style="{StaticResource NormalButtonSelect}"
+                                                />
+                                    </StackPanel>
+                                </Border>
+
+                            </Grid>
+                        </StackPanel>
+                        
+                    </Border>
+                    
+                    
+                </Grid>
+                <!-- Grid Duas Linhas-->
+                
+            </Grid>
+            <!-- Grid Conteudo-->
+        
+        </Grid>
+        <!-- Grid Geral-->
+
     </Border>
 </Window>

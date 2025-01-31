@@ -4,6 +4,18 @@
              xmlns:local="clr-namespace:ProjetaUpdate"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        
+        
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Theme/MenuButtonTheme.xaml"/>
+                <ResourceDictionary Source="Theme/BorderPressed.xaml"/>
+                <ResourceDictionary Source="Theme/NormalButtonSelect.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+
+        </ResourceDictionary>
+        
+
     </Application.Resources>
 </Application>
