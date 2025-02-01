@@ -1,0 +1,26 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    
+    <Style TargetType="Border" x:Key="CommonBorder">
+        
+        <!-- Definição padrão da borda -->  
+        <Setter Property="Effect">
+            <Setter.Value>
+
+                <DropShadowEffect Color="Black" 
+                                  Direction="320" 
+                                  ShadowDepth="5" 
+                                  BlurRadius="10" 
+                                  Opacity="0.5"/>
+
+            </Setter.Value>
+            
+            
+        </Setter>
+
+        <Style.Triggers>
+
+        </Style.Triggers>
+    </Style>
+</ResourceDictionary>

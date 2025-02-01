@@ -8,40 +8,57 @@
 
         <Style.Setters>
 
-
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="RadioButton">
-                        <Grid VerticalAlignment="Stretch"
-                              HorizontalAlignment="Stretch"
-                              Background="{TemplateBinding Background}">
 
-                            <TextBlock Text="{TemplateBinding Property=Content}"
-                                       Foreground="#ffffff"
-                                       VerticalAlignment="Center"
-                                       HorizontalAlignment="Center"
-                                       Margin="0,0,0,0"/>
+                        <Border CornerRadius="5"
+                                Background="{ TemplateBinding Background}">
+                            
+                            <Grid VerticalAlignment="Stretch"
+                                  HorizontalAlignment="Stretch">
 
+                                    <TextBlock Text="{TemplateBinding Property=Content}"
+                                               Foreground="#ffffff"
+                                               VerticalAlignment="Center"
+                                               HorizontalAlignment="Center"
+                                               Margin="0,0,0,0"/>
+                            </Grid>
+                            
+                        </Border>
 
-
-                        </Grid>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
 
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
-
+            <Setter Property="FontFamily" Value="pack://application:,,,/Fonts/#Barlow"/>
+            <Setter Property="FontSize" Value="16"/>
 
         </Style.Setters>
 
-        <!--<Style.Triggers>
-            <Trigger Property="IsChecked" Value="True">
-                
+        <Style.Triggers>
+
+            <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Background" 
                         Value="#16559F"/>
             </Trigger>
-        </Style.Triggers>-->
+
+            <Trigger Property="IsChecked" Value="True">
+                <Setter Property="Background" 
+                        Value="#009587"/>
+
+                <Setter Property="BorderBrush" Value="White"/>
+                <Setter Property="Effect">
+                    <Setter.Value>
+                        <DropShadowEffect BlurRadius="8" ShadowDepth="3" Opacity="0.9"/>
+                    </Setter.Value>
+                </Setter>
+                
+            </Trigger>
+
+        </Style.Triggers>
 
     </Style>
 

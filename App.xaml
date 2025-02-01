@@ -11,6 +11,9 @@
                 <ResourceDictionary Source="Theme/MenuButtonTheme.xaml"/>
                 <ResourceDictionary Source="Theme/BorderPressed.xaml"/>
                 <ResourceDictionary Source="Theme/NormalButtonSelect.xaml"/>
+                <ResourceDictionary Source="Theme/CommonBorder.xaml"/>
+                <ResourceDictionary Source="Theme/CommonTextBlock.xaml"/>
+                <ResourceDictionary Source="Theme/ActionButtons.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
 

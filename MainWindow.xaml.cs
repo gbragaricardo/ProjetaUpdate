@@ -50,15 +50,5 @@ namespace ProjetaUpdate
             this.ProjetaHDRContent.Visibility = Visibility.Hidden;
         }
 
-        private void BotaoProjetaHDR_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            var botao = sender as RadioButton;
-            if (botao != null && botao.IsChecked == true)
-            {
-                botao.IsChecked = false;
-                e.Handled = true; // Previne o comportamento padrão do RadioButton
-            }
-
-        }
     }
 }
