@@ -84,6 +84,13 @@ namespace ProjetaUpdate.Model
 
                 // Encontra a pasta correta dentro do ZIP extraído
                 string[] extractedDirs = Directory.GetDirectories(tempExtractPath);
+                // Verifica se existe um diretório dentro do primeiro nível da extração
+                if (extractedDirs.Length == 1)
+                {
+                    string mainExtractedPath = extractedDirs[0]; // Primeiro diretório encontrado
+                    extractedDirs = Directory.GetDirectories(mainExtractedPath); // Agora pegamos os subdiretórios dentro dele
+                }
+
                 string extractedAddinPath = Array.Find(extractedDirs, dir => Path.GetFileName(dir) == _addinName);
 
                 if (extractedAddinPath == null)
