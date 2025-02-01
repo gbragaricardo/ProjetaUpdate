@@ -19,8 +19,8 @@
         <Border.Background>
             <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                 <GradientStop Color="#DB0F19" Offset="0"/>
-                <GradientStop Color="#7A020A" Offset="0.7"/>
-                <GradientStop Color="#200000" Offset="1"/>
+                <GradientStop Color="#7A020A" Offset="0.8"/>
+                <GradientStop Color="#200000" Offset="1.1"/>
             </LinearGradientBrush>
         </Border.Background>
         
@@ -72,7 +72,7 @@
                        Source="Images/logo-branca.png"
                        Stretch="Uniform"
                        Width="200"
-                       Margin="0 0 0 0"/>
+                       HorizontalAlignment="Left"/>
                 <!--Logo-->
 
                 <!-- Grid Duas Linhas-->
@@ -93,13 +93,14 @@
                                     Height="50"
                                     CornerRadius="5"
                                     Style="{StaticResource CommonBorder}">
-                                
 
-                                <RadioButton Content="PROJETA HDR"                                            
-                                             Style="{StaticResource MenuButtonTheme}"                                        
-                                             Checked="ProjetaHDR_Checked"
-                                             Unchecked="ProjetaHDR_Unchecked"
-                                             x:Name="BotaoProjetaHDR"/>
+
+                                <RadioButton x:Name="ProjetaHDR_MenuButton"
+                                             Content="PROJETA HDR"
+                                             Tag="ProjetaHDR"
+                                             Style="{StaticResource MenuButtonTheme}"
+                                             Checked="ProjetaHDR_MenuButton_Checked"
+                                             Unchecked="ProjetaHDR_MenuButton_Unchecked"/>
                             </Border>
                             <!-- ProjetaHDR -->
 
@@ -114,9 +115,9 @@
                             Padding="20 50">
 
                         <!-- Stack Version/Actions -->
-                        <StackPanel VerticalAlignment="Top"
-                                    Visibility="Visible"
-                                    x:Name="ProjetaHDRContent">
+                        <StackPanel x:Name="ProjetaHDR_Expanded"
+                                    VerticalAlignment="Top"
+                                    Visibility="Visible">
 
                             <!-- Grid Versions -->
                             <Grid Height="100"
@@ -138,7 +139,7 @@
                                         <TextBlock Text="ULTIMA VERSAO"
                                                    Style="{StaticResource CommonTextBlock}"/>
 
-                                        <TextBlock Text="XXX.XXX"
+                                        <TextBlock x:Name="LatestVersionText"
                                                    Style="{StaticResource CommonTextBlock}"/>
                                     </StackPanel>
                                     
@@ -157,7 +158,7 @@
                                         <TextBlock Text="VERSÂO ATUAL"
                                                    Style="{StaticResource CommonTextBlock}"/>
 
-                                        <TextBlock Text="XXX.XXX"
+                                        <TextBlock x:Name="InstalledVersionText"
                                                    Style="{StaticResource CommonTextBlock}"/>
                                     </StackPanel>
                                     
@@ -183,7 +184,9 @@
                                         CornerRadius="5"
                                         Style="{StaticResource CommonBorder}">
 
-                                    <Button Content="INSTALAR"                                          
+                                    <Button x:Name="buttonInstall"
+                                            Click="buttonInstall_Click"
+                                            Content="INSTALAR"                                          
                                             Style="{StaticResource ActionButtons}"/>
                                 </Border>
                                 <!-- Border Install -->
