@@ -10,12 +10,12 @@ using System.Threading.Tasks;
 
 namespace ProjetaUpdate
 {
-    internal class VersionService
+    public class VersionService
     {
 
         private readonly string _addinPath;
         private readonly string _addinName;
-        private readonly string repoUrl;
+        public Version TypeVInstalled { get; set; }
 
         public VersionService(string AddinName)
         {
@@ -35,11 +35,23 @@ namespace ProjetaUpdate
             if (File.Exists(assemblyPath))
             {
                 var versionInfo = FileVersionInfo.GetVersionInfo(assemblyPath);
+
+                if (versionInfo.FileVersion != null)
+                {
+                    TypeVInstalled = new Version(versionInfo.FileVersion);
+                }
+                else
+                {
+                    TypeVInstalled = new Version("0.0.0.0");
+                }
+
                 return versionInfo.FileVersion;
             }
 
+            TypeVInstalled = new Version("0.0.0.0");
             return "-";
         }
+
 
     }
 }

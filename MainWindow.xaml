@@ -39,22 +39,30 @@
                     Style="{StaticResource CommonBorder}"                                 
                     MouseLeftButtonDown="BorderArrasto_Pressionado">
                 
-                <!-- Botão Fechar -->
-                <Border Grid.Row="0"
-                        Margin="0 0 20 0"
-                        Width="30" Height="30"
-                        HorizontalAlignment="Right"
-                        Background="#DB0F19"
-                        CornerRadius="5"
-                        Style="{StaticResource CommonBorder}">
+                <Grid>
 
-                    <Button Content="X" 
-                            FontSize="14"
-                            Click="FecharApp"
-                            Style="{StaticResource NormalButtonSelect}"/>
-                </Border>
+                    <TextBlock Text="GRUPO PROJETA"
+                               HorizontalAlignment="Left"
+                               Margin="20 0 0 0"
+                               Style="{StaticResource CommonTextBlock}"/>
+
+                    <!-- Botão Fechar -->
+                    <Border Grid.Row="0"
+                            Margin="0 0 20 0"
+                            Width="30" Height="30"
+                            HorizontalAlignment="Right"
+                            Background="#DB0F19"
+                            CornerRadius="5"
+                            Style="{StaticResource CommonBorder}">
+
+                        <Button Content="X" 
+                                FontSize="14"
+                                Click="FecharApp"
+                                Style="{StaticResource NormalButtonSelect}"/>
+                    </Border>
                 <!-- Botão Fechar -->
-                
+                </Grid>
+
             </Border>
             <!-- Border Da Window-->
 
@@ -72,7 +80,8 @@
                        Source="Images/logo-branca.png"
                        Stretch="Uniform"
                        Width="200"
-                       HorizontalAlignment="Left"/>
+                       HorizontalAlignment="Left"
+                       MouseLeftButtonDown="Logo_MouseLeftButtonDown"/>
                 <!--Logo-->
 
                 <!-- Grid Duas Linhas-->
@@ -88,22 +97,23 @@
                         <!-- Stack Menu Buttons -->                     
                         <StackPanel>
 
+                            
+
+                            <!-- HOME -->
+                            <RadioButton Content="HOME"
+                                         Style="{StaticResource MenuButtonTheme}"
+                                         IsChecked="True"
+                                         Margin="0 0 0 25"/>
+                            <!-- HOME -->
+
                             <!-- ProjetaHDR -->
-                            <Border Background="#4C0105"
-                                    Height="50"
-                                    CornerRadius="5"
-                                    Style="{StaticResource CommonBorder}">
-
-
-                                <RadioButton x:Name="ProjetaHDR_MenuButton"
-                                             Content="PROJETA HDR"
-                                             Tag="ProjetaHDR"
-                                             Style="{StaticResource MenuButtonTheme}"
-                                             Checked="ProjetaHDR_MenuButton_Checked"
-                                             Unchecked="ProjetaHDR_MenuButton_Unchecked"/>
-                            </Border>
+                            <RadioButton x:Name="ProjetaHDR_MenuButton"
+                                         Content="PROJETA HDR"
+                                         Tag="ProjetaHDR"
+                                         Style="{StaticResource MenuButtonTheme}"
+                                         Checked="ProjetaHDR_MenuButton_Checked"
+                                         Unchecked="ProjetaHDR_MenuButton_Unchecked"/>
                             <!-- ProjetaHDR -->
-
                         </StackPanel>
                         <!-- Stack Menu Buttons -->
                         
@@ -117,7 +127,7 @@
                         <!-- Stack Version/Actions -->
                         <StackPanel x:Name="ProjetaHDR_Expanded"
                                     
-                                    Visibility="Visible">
+                                    Visibility="Hidden">
 
                             <!-- Grid Versions -->
                             <Grid Height="100"
@@ -184,7 +194,8 @@
                                         CornerRadius="5"                                       
                                         Style="{StaticResource CommonBorder}">
                                 
-                                    <Button Content="INSTALAR" 
+                                    <Button x:Name="ButtonInstall"
+                                            Content="INSTALAR" 
                                             Click="ButtonInstall_Click"
                                             Style="{StaticResource ActionButtons}"/>
 
@@ -199,7 +210,8 @@
                                         Style="{StaticResource CommonBorder}">
                                    
                                     
-                                        <Button Content="ATUALIZAR"      
+                                        <Button x:Name="ButtonAtt"
+                                                Content="ATUALIZAR"      
                                                 Click="ButtonAtt_Click"
                                                 Style="{StaticResource ActionButtons}"/>
                                     
@@ -224,7 +236,8 @@
                             </Grid>
 
                             <Grid>
-                                <TextBlock Text="Teste"
+                                <TextBlock x:Name="Status"
+                                           Text="{Binding StatusMessage }"
                                            Style="{StaticResource CommonTextBlock}"/>
                             </Grid>
                         </StackPanel>

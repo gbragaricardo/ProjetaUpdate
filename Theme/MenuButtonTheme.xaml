@@ -7,31 +7,37 @@
            >
 
         <Style.Setters>
-
+            
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="RadioButton">
-
                         <Border CornerRadius="5"
                                 Background="{ TemplateBinding Background}">
-                            
                             <Grid VerticalAlignment="Stretch"
                                   HorizontalAlignment="Stretch">
-
-                                    <TextBlock Text="{TemplateBinding Property=Content}"
+                                <TextBlock Text="{TemplateBinding Property=Content}"
                                                Foreground="#ffffff"
                                                VerticalAlignment="Center"
                                                HorizontalAlignment="Center"
                                                Margin="0,0,0,0"/>
                             </Grid>
-                            
                         </Border>
-
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
 
-            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="Black" 
+                          Direction="320" 
+                          ShadowDepth="5" 
+                          BlurRadius="10" 
+                          Opacity="0.5"/>
+                </Setter.Value>
+            </Setter>
+
+            <Setter Property="Height" Value="50"/>
+            <Setter Property="Background" Value="#4C0105"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="FontFamily" Value="pack://application:,,,/Fonts/#Barlow"/>
             <Setter Property="FontSize" Value="16"/>

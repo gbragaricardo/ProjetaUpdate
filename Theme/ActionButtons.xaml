@@ -40,6 +40,10 @@
 
             </Trigger>
 
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Background" Value="#828282"/>
+            </Trigger>
+
             
 
         </Style.Triggers>
