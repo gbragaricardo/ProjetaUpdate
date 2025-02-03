@@ -56,6 +56,7 @@ namespace ProjetaUpdate
                 await AtualizarStatusComDelay("Obtendo Versoes");
 
                 client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0"); // GitHub exige um User-Agent
+                client.Timeout = TimeSpan.FromMinutes(10);
 
                 try
                 {
@@ -117,41 +118,57 @@ namespace ProjetaUpdate
                 if (_versionTag == null)
                     return;
 
-                if (_versionTag.ToLower() == "latest")
-                {
-                    _githubSearch = $"https://api.github.com/repos/gbragaricardo/{_addinName}/releases/latest";
-                }
-                   
-                else
-                {
-                    _githubSearch = $"https://api.github.com/repos/gbragaricardo/{_addinName}/releases/tags/{_versionTag}";
-                }
-                
-                
-                string versionUrl;
+                // Define a URL da API para obter informações da versão
+                string githubApiUrl = _versionTag.ToLower() == "latest" ? $"https://api.github.com/repos/gbragaricardo/{_addinName}/releases/latest"
+                                                                        : $"https://api.github.com/repos/gbragaricardo/{_addinName}/releases/tags/{_versionTag}";
+
+                string versionUrl = null;
                 string tempZipPath = Path.Combine(Path.GetTempPath(), $"{_addinName}.zip");
                 string tempExtractPath = Path.Combine(Path.GetTempPath(), $"{_addinName}_temp");
 
                 Debug.WriteLine("Obtendo URL da última versão...");
-                await AtualizarStatusComDelay("Obtendo ultima versao");
+                await AtualizarStatusComDelay("Obtendo última versão...");
 
                 using (HttpClient client = new HttpClient())
                 {
                     client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0");
+                    client.Timeout = TimeSpan.FromMinutes(10);
 
-                    string zipUrl = await client.GetStringAsync(_githubSearch);
-                    using (JsonDocument doc = JsonDocument.Parse(zipUrl))
+                    string jsonResponse = await client.GetStringAsync(githubApiUrl);
+                    using (JsonDocument doc = JsonDocument.Parse(jsonResponse))
                     {
-                        versionUrl = doc.RootElement.GetProperty("zipball_url").GetString();
+                        JsonElement root = doc.RootElement;
+
+                        // Busca no array "assets" um arquivo .zip
+                        if (root.TryGetProperty("assets", out JsonElement assetsArray))
+                        {
+                            foreach (JsonElement asset in assetsArray.EnumerateArray())
+                            {
+                                if (asset.TryGetProperty("name", out JsonElement name) &&
+                                    name.GetString().EndsWith(".zip")) // Filtra apenas arquivos ZIP
+                                {
+                                    versionUrl = asset.GetProperty("browser_download_url").GetString();
+                                    break; // Para no primeiro ZIP encontrado
+                                }
+                            }
+                        }
+                    }
+
+                    // Verifica se conseguiu obter o link do ZIP
+                    if (string.IsNullOrEmpty(versionUrl))
+                    {
+                        Debug.WriteLine("Nenhum arquivo ZIP encontrado na release.");
+                        await AtualizarStatusComDelay("Erro: Nenhum arquivo ZIP encontrado.");
+                        return;
                     }
 
                     Debug.WriteLine("Baixando arquivo ZIP...");
-                    await AtualizarStatusComDelay("Baixando arquivos");
+                    await AtualizarStatusComDelay("Baixando arquivos...");
 
                     byte[] zipData = await client.GetByteArrayAsync(versionUrl);
                     File.WriteAllBytes(tempZipPath, zipData);
 
-                    await AtualizarStatusComDelay("Download concluido");
+                    await AtualizarStatusComDelay("Download concluído");
                 }
 
                 // Remove pasta temporária se já existir
@@ -161,36 +178,29 @@ namespace ProjetaUpdate
                 }
 
                 Debug.WriteLine("Extraindo arquivos...");
-                await AtualizarStatusComDelay("Extraindo arquivos");
+                await AtualizarStatusComDelay("Extraindo arquivos...");
 
                 ZipFile.ExtractToDirectory(tempZipPath, tempExtractPath);
 
                 // Encontra a pasta correta dentro do ZIP extraído
                 string[] extractedDirs = Directory.GetDirectories(tempExtractPath);
-                // Verifica se existe um diretório dentro do primeiro nível da extração
-                if (extractedDirs.Length == 1)
-                {
-                    string mainExtractedPath = extractedDirs[0]; // Primeiro diretório encontrado
-                    extractedDirs = Directory.GetDirectories(mainExtractedPath); // Agora pegamos os subdiretórios dentro dele
-                }
 
                 string extractedAddinPath = Array.Find(extractedDirs, dir => Path.GetFileName(dir) == _addinName);
 
                 if (extractedAddinPath == null)
                 {
                     Debug.WriteLine($"Pasta {_addinName} não encontrada no ZIP extraído.");
-                    StatusMessage = $"Pasta {_addinName} não encontrada no ZIP extraído.";
-
+                    await AtualizarStatusComDelay($"Erro: Pasta {_addinName} não encontrada.");
                     return;
                 }
 
                 // Se a versão antiga existir, movê-la para a pasta "VersaoAnterior"
                 if (Directory.Exists(_addinPath))
                 {
-                    Console.WriteLine("Excluindo Versao Anterior...");
+                    Console.WriteLine("Excluindo Versão Anterior...");
                     await AtualizarStatusComDelay("Substituindo arquivos...");
 
-                    Directory.Delete(_addinPath, true); 
+                    Directory.Delete(_addinPath, true);
                 }
 
                 // Move a nova versão para o diretório do Revit Addins
@@ -208,7 +218,7 @@ namespace ProjetaUpdate
             catch (Exception ex)
             {
                 Console.WriteLine($"Erro na instalação: {ex.Message}");
-                await AtualizarStatusComDelay("Erro na instalação") ;
+                await AtualizarStatusComDelay($"Erro na instalação: {ex.Message}");
             }
         }
 

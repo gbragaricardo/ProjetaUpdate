@@ -52,7 +52,7 @@ namespace ProjetaUpdate
 
             buttonProjetaHDR.Visibility = Visibility.Visible;
 
-            var addinName = "ProjetaUpdate"; /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            var addinName = "ProjetaHDR"; /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
             VService = new VersionService(addinName);
             OnlineVService = new OnlineVersionService(addinName);
@@ -62,8 +62,11 @@ namespace ProjetaUpdate
             {
                 var InstalledVersion = VService.VerificarVersao();
                 this.InstalledVersionText.Text = InstalledVersion;
+
                 if (InstalledVersion == "-")
+                {
                     this.ButtonAtt.IsEnabled = false;
+                }
 
             }
             else
@@ -79,14 +82,17 @@ namespace ProjetaUpdate
                 var (latestVersion, lastFourVersions) = await OnlineVService.ObterVersoesAsync();
                 this.LatestVersionText.Text = latestVersion;
 
+                if (lastFourVersions != null && lastFourVersions.Count > 0)
+                {
+                    VersionsComboBox.ItemsSource = lastFourVersions;
+                }
+
                 if (latestVersion == "-")
+                {
                     this.ButtonInstall.IsEnabled = false;
                     this.ButtonAtt.IsEnabled = false;
                     this.VersionsComboBox.IsEnabled = false;
-
-                if (lastFourVersions != null && lastFourVersions.Count > 0)
-                    VersionsComboBox.ItemsSource = lastFourVersions;
-                VersionsComboBox.IsEnabled = true;
+                }
 
             }
             else
@@ -127,6 +133,8 @@ namespace ProjetaUpdate
                     VersionsComboBox.ItemsSource = lastFourVersions;
             }
 
+            await OnlineVService.VersionCompare(VService.TypeVInstalled, OnlineVService.TypeVLatest);
+
         }
 
         private async void ButtonAtt_Click(object sender, RoutedEventArgs e)
@@ -148,6 +156,8 @@ namespace ProjetaUpdate
                 if (lastFourVersions != null && lastFourVersions.Count > 0)
                     VersionsComboBox.ItemsSource = lastFourVersions;
             }
+
+            await OnlineVService.VersionCompare(VService.TypeVInstalled, OnlineVService.TypeVLatest);
         }
 
         private void Logo_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

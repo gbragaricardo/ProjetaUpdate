@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ProjetaUpdate"
         mc:Ignorable="d"
         WindowStyle="None"
-        Height="590" 
+        Height="600" 
         Width="825"
         ResizeMode="NoResize"
         Background="Transparent"
@@ -127,7 +127,7 @@
                         <!-- Stack Version/Actions -->
                         <StackPanel x:Name="ProjetaHDR_Expanded"
                                     
-                                    Visibility="Hidden">
+                                    Visibility="Visible">
 
                             <!-- Grid Versions -->
                             <Grid Height="100"
