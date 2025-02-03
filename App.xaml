@@ -13,6 +13,7 @@
                 <ResourceDictionary Source="Theme/CommonBorder.xaml"/>
                 <ResourceDictionary Source="Theme/CommonTextBlock.xaml"/>
                 <ResourceDictionary Source="Theme/ActionButtons.xaml"/>
+                <ResourceDictionary Source="Theme/ComboBox.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
 

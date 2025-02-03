@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace ProjetaUpdate
@@ -13,6 +15,7 @@ namespace ProjetaUpdate
 
         private readonly string _addinPath;
         private readonly string _addinName;
+        private readonly string repoUrl;
 
         public VersionService(string AddinName)
         {
@@ -37,5 +40,6 @@ namespace ProjetaUpdate
 
             return "-";
         }
+
     }
 }

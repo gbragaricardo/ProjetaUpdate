@@ -112,16 +112,16 @@
 
                     <!-- Border Version/Actions -->
                     <Border Grid.Column="1"
-                            Padding="20 50">
+                            Padding="20 50 20 0">
 
                         <!-- Stack Version/Actions -->
                         <StackPanel x:Name="ProjetaHDR_Expanded"
-                                    VerticalAlignment="Top"
+                                    
                                     Visibility="Visible">
 
                             <!-- Grid Versions -->
                             <Grid Height="100"
-                                  Margin="0 0 0 50">
+                                  Margin="0 0 0 25">
 
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
@@ -169,7 +169,8 @@
                             <!-- Grid Versions -->
 
                             <!-- Grid Actions -->
-                            <Grid Height="100">
+                            <Grid Height="100"
+                                  Margin="0 0 0 25">
 
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
@@ -177,38 +178,55 @@
                                 </Grid.ColumnDefinitions>
 
                                 <!-- Border Install -->
-                                <Border 
-                                        Grid.Column="0"
+                                <Border Grid.Column="0"
                                         Margin= "0 0 15 0"
                                         Background="#4C0105"
-                                        CornerRadius="5"
+                                        CornerRadius="5"                                       
                                         Style="{StaticResource CommonBorder}">
-
-                                    <Button x:Name="buttonInstall"
-                                            Click="buttonInstall_Click"
-                                            Content="INSTALAR"                                          
+                                
+                                    <Button Content="INSTALAR" 
+                                            Click="ButtonInstall_Click"
                                             Style="{StaticResource ActionButtons}"/>
+
                                 </Border>
                                 <!-- Border Install -->
 
                                 <!-- Border Att -->
-                                <Border 
-                                       Grid.Column="1"
-                                       Margin= "15 0 0 0"
-                                       Background="#4C0105"
-                                       CornerRadius="5"
-                                       Style="{StaticResource CommonBorder}">
+                                <Border Grid.Column="1"
+                                        Margin= "15 0 0 0"
+                                        Background="#4C0105"
+                                        CornerRadius="5"
+                                        Style="{StaticResource CommonBorder}">
                                    
-                                    <StackPanel>
-                                        <Button Content="ATUALIZAR"                                              
+                                    
+                                        <Button Content="ATUALIZAR"      
+                                                Click="ButtonAtt_Click"
                                                 Style="{StaticResource ActionButtons}"/>
-                                    </StackPanel>
+                                    
                                 </Border>
                                 <!-- Border Att -->
 
                             </Grid>
                             <!-- Grid Actions -->
-                            
+
+                            <Grid Margin="0 0 0 15">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <ComboBox x:Name="VersionsComboBox"
+                                          Margin="0 0 15 0"                                        
+                                          Style="{StaticResource ComboBox}">
+                                    
+                                </ComboBox>
+
+                            </Grid>
+
+                            <Grid>
+                                <TextBlock Text="Teste"
+                                           Style="{StaticResource CommonTextBlock}"/>
+                            </Grid>
                         </StackPanel>
                         <!-- Stack Version/Actions -->
                         

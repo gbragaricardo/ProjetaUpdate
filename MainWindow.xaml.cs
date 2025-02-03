@@ -44,27 +44,32 @@ namespace ProjetaUpdate
         private async void ProjetaHDR_MenuButton_Checked(object sender, RoutedEventArgs e)
         {
             var buttonProjetaHDR = this.ProjetaHDR_Expanded;
-
             if (buttonProjetaHDR == null)
                 return;
 
-            var addinName = "ProjetaHDR";
-
             buttonProjetaHDR.Visibility = Visibility.Visible;
 
+
+            var addinName = "ProjetaHDR";
             var versionService = new VersionService(addinName);
+            var onlineVersionService = new OnlineVersionService(addinName);
+
             if (versionService.VerificarInstalacao() == true)
             {
                 var InstalledVersion = versionService.VerificarVersao();
                 this.InstalledVersionText.Text = InstalledVersion;
             }
 
-            var onlineVersionService = new OnlineVersionService(addinName);
+            
             if (versionService.VerificarInstalacao() == true)
             {
-                var latestVersion = await onlineVersionService.ObterVersaoMaisRecenteAsync();
+                var (latestVersion, lastFourVersions) = await onlineVersionService.ObterVersoesAsync();
                 this.LatestVersionText.Text = latestVersion;
+
+                if (lastFourVersions != null && lastFourVersions.Count > 0)
+                    VersionsComboBox.ItemsSource = lastFourVersions;
             }
+
         }
 
         private void ProjetaHDR_MenuButton_Unchecked(object sender, RoutedEventArgs e)
@@ -72,11 +77,16 @@ namespace ProjetaUpdate
             this.ProjetaHDR_Expanded.Visibility = Visibility.Hidden;
         }
 
-        private async void buttonInstall_Click(object sender, RoutedEventArgs e)
+        private async void ButtonInstall_Click(object sender, RoutedEventArgs e)
         {
             var installer = new AddinInstaller();
 
             await installer.InstalarAddinAsync();
+        }
+
+        private void ButtonAtt_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
