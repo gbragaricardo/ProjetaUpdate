@@ -52,7 +52,7 @@ namespace ProjetaUpdate
 
             buttonProjetaHDR.Visibility = Visibility.Visible;
 
-            var addinName = "ProjetaHDR"; /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            var addinName = "ProjetaHDR";
 
             VService = new VersionService(addinName);
             OnlineVService = new OnlineVersionService(addinName);

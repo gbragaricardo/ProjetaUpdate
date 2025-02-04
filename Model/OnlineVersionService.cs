@@ -8,6 +8,7 @@ using System.IO.Compression;
 using System.IO;
 using System.Diagnostics;
 using System.Windows.Controls;
+using System.Linq;
 
 namespace ProjetaUpdate
 {
@@ -16,11 +17,11 @@ namespace ProjetaUpdate
 
         public Version TypeVLatest { get; set; }
 
-        private readonly string _githubLatestRelease;
         private readonly string _gitubRealeses;
         private string _githubApiUrl;
+        private readonly string _revitAddinPath;
         private readonly string _addinName;
-        private readonly string _addinPath;
+        private readonly string _myAddinPath;
         string _versionTag;
         private string _statusMessage;
         public string StatusMessage
@@ -43,9 +44,9 @@ namespace ProjetaUpdate
         public OnlineVersionService(string AddinName)
         {
             _addinName = AddinName;
-            _addinPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),"Autodesk","Revit","Addins","2024",_addinName);
+            _myAddinPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),"Autodesk","Revit","Addins","2024",_addinName);
+            _revitAddinPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Autodesk", "Revit", "Addins", "2024");
             _gitubRealeses = $"https://api.github.com/repos/gbragaricardo/{_addinName}/releases";
-            _githubLatestRelease = $"https://api.github.com/repos/gbragaricardo/{_addinName}/releases/latest";
         }
 
 
@@ -121,10 +122,17 @@ namespace ProjetaUpdate
 
                 // Define a URL da API para obter informações da versão
                 _githubApiUrl = _versionTag.ToLower() == "latest" ? $"https://api.github.com/repos/gbragaricardo/{_addinName}/releases/latest"
-                                                                        : $"https://api.github.com/repos/gbragaricardo/{_addinName}/releases/tags/{_versionTag}";
+                                                                  : $"https://api.github.com/repos/gbragaricardo/{_addinName}/releases/tags/{_versionTag}";
 
                 string versionUrl = null;
+
                 string tempZipPath = Path.Combine(Path.GetTempPath(), $"{_addinName}.zip");
+                // Verifica se o arquivo ZIP já existe no diretório temporário e o exclui
+                if (File.Exists(tempZipPath))
+                {
+                    File.Delete(tempZipPath);
+                }
+
                 string tempExtractPath = Path.Combine(Path.GetTempPath(), $"{_addinName}_temp");
 
                 Debug.WriteLine("Obtendo URL da última/Tag versão...");
@@ -195,19 +203,42 @@ namespace ProjetaUpdate
                     return;
                 }
 
-                // Se a versão antiga existir, movê-la para a pasta "VersaoAnterior"
-                if (Directory.Exists(_addinPath))
+                // Se a versão antiga existir, Excluir"
+                if (Directory.Exists(_myAddinPath))
                 {
                     Console.WriteLine("Excluindo Versão Anterior...");
                     await AtualizarStatusComDelay("Substituindo arquivos...");
 
-                    Directory.Delete(_addinPath, true);
+                    Directory.Delete(_myAddinPath, true);
                 }
+
+                // Se o addin antiga existir, Excluir"
+                string existingAddinFilePath = Directory.GetFiles(_revitAddinPath,"*.addin").FirstOrDefault();
+
+                if (File.Exists(existingAddinFilePath))
+                {
+                    Console.WriteLine("Excluindo Addin Anterior...");
+                    await AtualizarStatusComDelay("Substituindo arquivos...");
+                    File.Delete(existingAddinFilePath);
+                }
+
+                // Localiza o arquivo .addin dentro do diretório extraído
+                string addinFile = Directory.GetFiles(extractedAddinPath, "*.addin").FirstOrDefault();
+
+                if (addinFile == null)
+                {
+                    Console.WriteLine("Arquivo .addin nao encontrado");
+                    return;
+                }
+                
+                // Move o arquivo .addin diretamente para a pasta raiz de add-ins do Revit
+                File.Move(addinFile, Path.Combine(_revitAddinPath, Path.GetFileName(addinFile)));
+                
 
                 // Move a nova versão para o diretório do Revit Addins
                 Console.WriteLine("Instalando nova versão...");
                 await AtualizarStatusComDelay("Instalando nova versão...");
-                Directory.Move(extractedAddinPath, _addinPath);
+                Directory.Move(extractedAddinPath, _myAddinPath);
 
                 // Limpeza de arquivos temporários
                 File.Delete(tempZipPath);
