@@ -5,12 +5,259 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ProjetaUpdate"
         mc:Ignorable="d"
-        Title="MainWindow" 
+        WindowStyle="None"
         Height="600" 
-        Width="920"
+        Width="825"
+        ResizeMode="NoResize"
+        Background="Transparent"
+        AllowsTransparency="True"
         >
-    <Border Background="#DB0F19"
-            >
+    
+    <!--Border Pai-->
+    <Border Padding="0"
+            CornerRadius="10">
+        <Border.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#DB0F19" Offset="0"/>
+                <GradientStop Color="#7A020A" Offset="0.8"/>
+                <GradientStop Color="#200000" Offset="1.1"/>
+            </LinearGradientBrush>
+        </Border.Background>
         
+        <!-- Grid Geral-->
+        <Grid>
+            <Grid.RowDefinitions>
+                <!-- Barra personalizada -->
+                <RowDefinition Height="50"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <!-- Border Da Window-->
+            <Border Grid.Row="0"
+                    Background="#4C0105"
+                    CornerRadius="10 10 0 0"
+                    Style="{StaticResource CommonBorder}"                                 
+                    MouseLeftButtonDown="BorderArrasto_Pressionado">
+                
+                <Grid>
+
+                    <TextBlock Text="GRUPO PROJETA"
+                               HorizontalAlignment="Left"
+                               Margin="20 0 0 0"
+                               Style="{StaticResource CommonTextBlock}"/>
+
+                    <!-- Botão Fechar -->
+                    <Border Grid.Row="0"
+                            Margin="0 0 20 0"
+                            Width="30" Height="30"
+                            HorizontalAlignment="Right"
+                            Background="#DB0F19"
+                            CornerRadius="5"
+                            Style="{StaticResource CommonBorder}">
+
+                        <Button Content="X" 
+                                FontSize="14"
+                                Click="FecharApp"
+                                Style="{StaticResource NormalButtonSelect}"/>
+                    </Border>
+                <!-- Botão Fechar -->
+                </Grid>
+
+            </Border>
+            <!-- Border Da Window-->
+
+            <!-- Grid Conteudo-->
+            <Grid Grid.Row="1"
+                  Margin="20">
+                
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="100"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                
+                <!--Logo-->
+                <Image Grid.Row="0"                 
+                       Source="Images/logo-branca.png"
+                       Stretch="Uniform"
+                       Width="200"
+                       HorizontalAlignment="Left"
+                       MouseLeftButtonDown="Logo_MouseLeftButtonDown"/>
+                <!--Logo-->
+
+                <!-- Grid Duas Linhas-->
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Border Menu Buttons -->
+                    <Border Padding="0 50">
+
+                        <!-- Stack Menu Buttons -->                     
+                        <StackPanel>
+
+                            
+
+                            <!-- HOME -->
+                            <RadioButton Content="HOME"
+                                         Style="{StaticResource MenuButtonTheme}"
+                                         IsChecked="True"
+                                         Margin="0 0 0 25"/>
+                            <!-- HOME -->
+
+                            <!-- ProjetaHDR -->
+                            <RadioButton x:Name="ProjetaHDR_MenuButton"
+                                         Content="PROJETA HDR"
+                                         Tag="ProjetaHDR"
+                                         Style="{StaticResource MenuButtonTheme}"
+                                         Checked="ProjetaHDR_MenuButton_Checked"
+                                         Unchecked="ProjetaHDR_MenuButton_Unchecked"/>
+                            <!-- ProjetaHDR -->
+                        </StackPanel>
+                        <!-- Stack Menu Buttons -->
+                        
+                    </Border>
+                    <!-- Border Menu Buttons -->
+
+                    <!-- Border Version/Actions -->
+                    <Border Grid.Column="1"
+                            Padding="20 50 20 0">
+
+                        <!-- Stack Version/Actions -->
+                        <StackPanel x:Name="ProjetaHDR_Expanded"
+                                    
+                                    Visibility="Hidden">
+
+                            <!-- Grid Versions -->
+                            <Grid Height="100"
+                                  Margin="0 0 0 25">
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Border Latest Version -->
+                                <Border Grid.Column="0"
+                                        Margin= "0 0 15 0"
+                                        Background="#4C0105"
+                                        CornerRadius="5"
+                                        Style="{StaticResource CommonBorder}">
+
+                                    <StackPanel>
+                                        <TextBlock Text="ULTIMA VERSAO"
+                                                   Style="{StaticResource CommonTextBlock}"/>
+
+                                        <TextBlock x:Name="LatestVersionText"
+                                                   Style="{StaticResource CommonTextBlock}"/>
+                                    </StackPanel>
+                                    
+                                </Border>
+                                <!-- Border Latest Version -->
+
+                                <!-- Border Installed Version -->
+                                <Border 
+                                        Grid.Column="1"
+                                        Margin= "15 0 0 0"
+                                        Background="#4C0105"
+                                        CornerRadius="5"
+                                        Style="{StaticResource CommonBorder}">
+
+                                    <StackPanel>
+                                        <TextBlock Text="VERSÂO ATUAL"
+                                                   Style="{StaticResource CommonTextBlock}"/>
+
+                                        <TextBlock x:Name="InstalledVersionText"
+                                                   Style="{StaticResource CommonTextBlock}"/>
+                                    </StackPanel>
+                                    
+                                </Border>
+                                <!-- Border Installed Version -->
+
+                            </Grid>
+                            <!-- Grid Versions -->
+
+                            <!-- Grid Actions -->
+                            <Grid Height="100"
+                                  Margin="0 0 0 25">
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Border Install -->
+                                <Border Grid.Column="0"
+                                        Margin= "0 0 15 0"
+                                        Background="#4C0105"
+                                        CornerRadius="5"                                       
+                                        Style="{StaticResource CommonBorder}">
+                                
+                                    <Button x:Name="ButtonInstall"
+                                            Content="INSTALAR" 
+                                            Click="ButtonInstall_Click"
+                                            Style="{StaticResource ActionButtons}"/>
+
+                                </Border>
+                                <!-- Border Install -->
+
+                                <!-- Border Att -->
+                                <Border Grid.Column="1"
+                                        Margin= "15 0 0 0"
+                                        Background="#4C0105"
+                                        CornerRadius="5"
+                                        Style="{StaticResource CommonBorder}">
+                                   
+                                    
+                                        <Button x:Name="ButtonAtt"
+                                                Content="ATUALIZAR"      
+                                                Click="ButtonAtt_Click"
+                                                Style="{StaticResource ActionButtons}"/>
+                                    
+                                </Border>
+                                <!-- Border Att -->
+
+                            </Grid>
+                            <!-- Grid Actions -->
+
+                            <Grid Margin="0 0 0 15">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <ComboBox x:Name="VersionsComboBox"
+                                          Margin="0 0 15 0"                                        
+                                          Style="{StaticResource ComboBox}">
+                                    
+                                </ComboBox>
+
+                            </Grid>
+
+                            <Grid>
+                                <TextBlock x:Name="Status"
+                                           Text="{Binding StatusMessage }"
+                                           Style="{StaticResource CommonTextBlock}"/>
+                            </Grid>
+                        </StackPanel>
+                        <!-- Stack Version/Actions -->
+                        
+                    </Border>
+                    <!-- Border Version/Actions -->
+                    
+                    
+                </Grid>
+                <!-- Grid Duas Linhas-->
+                
+            </Grid>
+            <!-- Grid Conteudo-->
+        
+        </Grid>
+        <!-- Grid Geral-->
+
     </Border>
+    <!-- Border Pai -->
+    
 </Window>
+<!-- Window -->
