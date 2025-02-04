@@ -63,53 +63,42 @@ namespace ProjetaUpdate
                 var InstalledVersion = VService.VerificarVersao();
                 this.InstalledVersionText.Text = InstalledVersion;
 
-                if (InstalledVersion == "-")
-                {
-                    this.ButtonAtt.IsEnabled = false;
-                }
-
             }
             else
             {
                 this.InstalledVersionText.Text = "-";
                 VService.TypeVInstalled = new Version("0.0.0.0");
-                this.ButtonAtt.IsEnabled = false;
             }
 
-            
-            if (VService.VerificarInstalacao() == true)
+            var (latestVersion, lastFourVersions) = await OnlineVService.ObterVersoesAsync();
+            this.LatestVersionText.Text = latestVersion;
+
+            if (latestVersion != "-")
             {
-                var (latestVersion, lastFourVersions) = await OnlineVService.ObterVersoesAsync();
-                this.LatestVersionText.Text = latestVersion;
+                VersionsComboBox.ItemsSource = lastFourVersions;
 
-                if (lastFourVersions != null && lastFourVersions.Count > 0)
-                {
-                    VersionsComboBox.ItemsSource = lastFourVersions;
-                }
-
-                if (latestVersion == "-")
-                {
-                    this.ButtonInstall.IsEnabled = false;
-                    this.ButtonAtt.IsEnabled = false;
-                    this.VersionsComboBox.IsEnabled = false;
-                }
-
-            }
+                //this.ButtonInstall.IsEnabled = true;
+                //this.VersionsComboBox.IsEnabled = true;
+            }                    
             else
             {
-                this.LatestVersionText.Text = "-";
                 OnlineVService.TypeVLatest = new Version("0.0.0.0");
-                this.ButtonAtt.IsEnabled = false;
-                
             }
-
+            
             await OnlineVService.VersionCompare(VService.TypeVInstalled, OnlineVService.TypeVLatest);
+            var(boolInstall, boolAtt) =  await OnlineVService.CompareResult(VService.TypeVInstalled, OnlineVService.TypeVLatest);
+
+            this.ButtonInstall.IsEnabled = boolInstall;
+            this.VersionsComboBox.IsEnabled = boolInstall;
+            this.ButtonAtt.IsEnabled = boolAtt;
 
         }
 
         private void ProjetaHDR_MenuButton_Unchecked(object sender, RoutedEventArgs e)
         {
             this.ProjetaHDR_Expanded.Visibility = Visibility.Hidden;
+            this.ButtonAtt.IsEnabled = false;
+            this.ButtonInstall.IsEnabled = false;
         }
 
         private async void ButtonInstall_Click(object sender, RoutedEventArgs e)
@@ -117,23 +106,41 @@ namespace ProjetaUpdate
             SelectedComboBoxVersion = this.VersionsComboBox.SelectedItem as string;
             await OnlineVService.InstalarAddinAsync(SelectedComboBoxVersion);
 
+            await Task.Delay(2000);
+
             if (VService.VerificarInstalacao() == true)
             {
                 var InstalledVersion = VService.VerificarVersao();
                 this.InstalledVersionText.Text = InstalledVersion;
+
+            }
+            else
+            {
+                this.InstalledVersionText.Text = "-";
+                VService.TypeVInstalled = new Version("0.0.0.0");
             }
 
+            var (latestVersion, lastFourVersions) = await OnlineVService.ObterVersoesAsync();
+            this.LatestVersionText.Text = latestVersion;
 
-            if (VService.VerificarInstalacao() == true)
+            if (latestVersion != "-")
             {
-                var (latestVersion, lastFourVersions) = await OnlineVService.ObterVersoesAsync();
-                this.LatestVersionText.Text = latestVersion;
+                VersionsComboBox.ItemsSource = lastFourVersions;
 
-                if (lastFourVersions != null && lastFourVersions.Count > 0)
-                    VersionsComboBox.ItemsSource = lastFourVersions;
+                //this.ButtonInstall.IsEnabled = true;
+                //this.VersionsComboBox.IsEnabled = true;
+            }
+            else
+            {
+                OnlineVService.TypeVLatest = new Version("0.0.0.0");
             }
 
             await OnlineVService.VersionCompare(VService.TypeVInstalled, OnlineVService.TypeVLatest);
+            var (boolInstall, boolAtt) = await OnlineVService.CompareResult(VService.TypeVInstalled, OnlineVService.TypeVLatest);
+
+            this.ButtonInstall.IsEnabled = boolInstall;
+            this.VersionsComboBox.IsEnabled = boolInstall;
+            this.ButtonAtt.IsEnabled = boolAtt;
 
         }
 
@@ -141,23 +148,41 @@ namespace ProjetaUpdate
         {
             await OnlineVService.InstalarAddinAsync("latest");
 
+            await Task.Delay(2000);
+
             if (VService.VerificarInstalacao() == true)
             {
                 var InstalledVersion = VService.VerificarVersao();
                 this.InstalledVersionText.Text = InstalledVersion;
+
+            }
+            else
+            {
+                this.InstalledVersionText.Text = "-";
+                VService.TypeVInstalled = new Version("0.0.0.0");
             }
 
+            var (latestVersion, lastFourVersions) = await OnlineVService.ObterVersoesAsync();
+            this.LatestVersionText.Text = latestVersion;
 
-            if (VService.VerificarInstalacao() == true)
+            if (latestVersion != "-")
             {
-                var (latestVersion, lastFourVersions) = await OnlineVService.ObterVersoesAsync();
-                this.LatestVersionText.Text = latestVersion;
+                VersionsComboBox.ItemsSource = lastFourVersions;
 
-                if (lastFourVersions != null && lastFourVersions.Count > 0)
-                    VersionsComboBox.ItemsSource = lastFourVersions;
+                //this.ButtonInstall.IsEnabled = true;
+                //this.VersionsComboBox.IsEnabled = true;
+            }
+            else
+            {
+                OnlineVService.TypeVLatest = new Version("0.0.0.0");
             }
 
             await OnlineVService.VersionCompare(VService.TypeVInstalled, OnlineVService.TypeVLatest);
+            var (boolInstall, boolAtt) = await OnlineVService.CompareResult(VService.TypeVInstalled, OnlineVService.TypeVLatest);
+
+            this.ButtonInstall.IsEnabled = boolInstall;
+            this.VersionsComboBox.IsEnabled = boolInstall;
+            this.ButtonAtt.IsEnabled = boolAtt;
         }
 
         private void Logo_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

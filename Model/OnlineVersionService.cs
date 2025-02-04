@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.IO.Compression;
 using System.IO;
 using System.Diagnostics;
+using System.Windows.Controls;
 
 namespace ProjetaUpdate
 {
@@ -17,7 +18,7 @@ namespace ProjetaUpdate
 
         private readonly string _githubLatestRelease;
         private readonly string _gitubRealeses;
-        private string _githubSearch;
+        private string _githubApiUrl;
         private readonly string _addinName;
         private readonly string _addinPath;
         string _versionTag;
@@ -53,7 +54,7 @@ namespace ProjetaUpdate
         {
             using (HttpClient client = new HttpClient())
             {
-                await AtualizarStatusComDelay("Obtendo Versoes");
+                await AtualizarStatusComDelay("Buscando Versoes");
 
                 client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0"); // GitHub exige um User-Agent
                 client.Timeout = TimeSpan.FromMinutes(10);
@@ -119,22 +120,22 @@ namespace ProjetaUpdate
                     return;
 
                 // Define a URL da API para obter informações da versão
-                string githubApiUrl = _versionTag.ToLower() == "latest" ? $"https://api.github.com/repos/gbragaricardo/{_addinName}/releases/latest"
+                _githubApiUrl = _versionTag.ToLower() == "latest" ? $"https://api.github.com/repos/gbragaricardo/{_addinName}/releases/latest"
                                                                         : $"https://api.github.com/repos/gbragaricardo/{_addinName}/releases/tags/{_versionTag}";
 
                 string versionUrl = null;
                 string tempZipPath = Path.Combine(Path.GetTempPath(), $"{_addinName}.zip");
                 string tempExtractPath = Path.Combine(Path.GetTempPath(), $"{_addinName}_temp");
 
-                Debug.WriteLine("Obtendo URL da última versão...");
-                await AtualizarStatusComDelay("Obtendo última versão...");
+                Debug.WriteLine("Obtendo URL da última/Tag versão...");
+                await AtualizarStatusComDelay("Sincronizando versão...");
 
                 using (HttpClient client = new HttpClient())
                 {
                     client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0");
                     client.Timeout = TimeSpan.FromMinutes(10);
 
-                    string jsonResponse = await client.GetStringAsync(githubApiUrl);
+                    string jsonResponse = await client.GetStringAsync(_githubApiUrl);
                     using (JsonDocument doc = JsonDocument.Parse(jsonResponse))
                     {
                         JsonElement root = doc.RootElement;
@@ -222,51 +223,87 @@ namespace ProjetaUpdate
             }
         }
 
-        public async Task<string> VersionCompare(Version VInstall, Version VLatest)
+        public async Task<int> VersionCompare(Version VInstall, Version VLatest)
         {
+            int compareResult;
 
-            string compareResult;
-            if ((VLatest == null && VInstall == null) || (VLatest.ToString() == "0.0.0.0" && VInstall.ToString() == "0.0.0.0") )
+            try
             {
-                await AtualizarStatusComDelay("Bad Request");
-                compareResult = "Bad Request";
-                return compareResult;
-            }
-
-            else if (VLatest.ToString() == "0.0.0.0" || VLatest == null)
-            {
-                await AtualizarStatusComDelay("Erro ao obter nova versao");
-                compareResult = "Erro ao obter nova versao";
-                return compareResult;
-            }
-
-            else if (VInstall == null || VInstall.ToString() == "0.0.0.0")
-            {
-
-                await AtualizarStatusComDelay("Download disponivel");
-                compareResult = "Download disponivel";
-                return compareResult;
-            }
-
-            else
-            {
-                int compare = VInstall.CompareTo(VLatest);
-                if (compare == 0)
+                
+                if ((VLatest == null && VInstall == null) && (VLatest.ToString() == "0.0.0.0" && VInstall.ToString() == "0.0.0.0"))
                 {
-                    compareResult = "Versão atualizada!";
-                }
-                else if (compare < 0)
-                {
-                    compareResult = $"Nova versão disponível: {VLatest}";
-                }
-                else // comparacao > 0
-                {
-                    compareResult = "Versão Beta";
+                    await AtualizarStatusComDelay("Bad Request");
+                    compareResult = 0;
+                    return compareResult;
                 }
 
-                await AtualizarStatusComDelay(compareResult);
+                else if (VLatest.ToString() == "0.0.0.0" || VLatest == null)
+                {
+                    await AtualizarStatusComDelay("Erro ao obter nova versao");
+                    compareResult = 1;
+                    return compareResult;
+                }
+
+                else if (VInstall == null || VInstall.ToString() == "0.0.0.0")
+                {
+
+                    await AtualizarStatusComDelay("Download disponivel");
+                    compareResult = 2;
+                    return compareResult;
+                }
+
+                else
+                {
+                    int compare = VInstall.CompareTo(VLatest);
+                    if (compare == 0)
+                    {
+                        await AtualizarStatusComDelay("Versão atualizada!");
+                        compareResult = 3;
+                    }
+                    else if (compare < 0)
+                    {
+                        await AtualizarStatusComDelay($"Nova versão disponível: {VLatest}");
+                        compareResult = 4;
+                    }
+                    else // comparacao > 0
+                    {
+                        await AtualizarStatusComDelay("Versão Beta");
+                        compareResult = 5;
+                    }
+
+                    return compareResult;
+                }
+            }
+            catch (Exception ex)
+            {
+                await AtualizarStatusComDelay($"Error: {ex.Message}");
+                compareResult = 0;
                 return compareResult;
             }
+        }
+
+        public async Task<(bool, bool)> CompareResult(Version VInstall, Version VLatest)
+        {
+            bool buttonInstall = false;
+            bool buttonAtt = false;
+
+            switch (await VersionCompare(VInstall, VLatest))
+            {
+                case 0: break;
+                case 1: break;
+                case 2: buttonInstall = true; break;
+                case 3: buttonInstall = true; break;
+                case 4: buttonInstall = true;
+                        buttonAtt = true;
+                        break;
+
+                case 5: buttonInstall = true; break;
+
+                default: break;   
+            }
+
+
+            return(buttonInstall, buttonAtt);
         }
 
         private async Task AtualizarStatusComDelay(string novaMensagem, int delayMs = 500)
