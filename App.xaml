@@ -2,23 +2,30 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:ProjetaUpdate"
+             xmlns:viewModel="clr-namespace:ProjetaUpdate.MVVM.ViewModels"
+             xmlns:view="clr-namespace:ProjetaUpdate.MVVM.Views"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        
-        
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Theme/MenuButtonTheme.xaml"/>
-                <ResourceDictionary Source="Theme/NormalButtonSelect.xaml"/>
-                <ResourceDictionary Source="Theme/CommonBorder.xaml"/>
-                <ResourceDictionary Source="Theme/CommonTextBlock.xaml"/>
-                <ResourceDictionary Source="Theme/ActionButtons.xaml"/>
-                <ResourceDictionary Source="Theme/ComboBox.xaml"/>
+                <ResourceDictionary Source="Resources/Themes/MenuButtonTheme.xaml"/>
+                <ResourceDictionary Source="Resources/Themes/NormalButtonSelect.xaml"/>
+                <ResourceDictionary Source="Resources/Themes/CommonBorder.xaml"/>
+                <ResourceDictionary Source="Resources/Themes/CommonTextBlock.xaml"/>
+                <ResourceDictionary Source="Resources/Themes/ActionButtons.xaml"/>
+                <ResourceDictionary Source="Resources/Themes/ComboBox.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
+            <!-- **************************************************************************** -->
+
+            <DataTemplate DataType="{x:Type viewModel:AddinDownloadViewModel}">
+                <view:AddinDownloadView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type viewModel:HomeViewModel}">
+                <view:HomeView/>
+            </DataTemplate>
 
         </ResourceDictionary>
-        
-
     </Application.Resources>
 </Application>

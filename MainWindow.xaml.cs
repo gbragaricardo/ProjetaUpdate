@@ -20,175 +20,177 @@ namespace ProjetaUpdate
     /// </summary>
     public partial class MainWindow : Window
     {
-        public VersionService VService { get; set; }
-        public OnlineVersionService OnlineVService { get; set; }
-        public string SelectedComboBoxVersion { get; set; }
+        //public VersionService VService { get; set; }
+        //public OnlineVersionService OnlineVService { get; set; }
+        //public string SelectedComboBoxVersion { get; set; }
 
-        public MainWindow()
-        {
-            InitializeComponent();
-        }
+        //public MainWindow()
+        //{
+        //    InitializeComponent();
+        //}
 
-        private void BorderArrasto_Pressionado(object sender, MouseButtonEventArgs e)
-        {
-            // Verifica se o botão esquerdo do mouse está pressionado
-            if (e.ButtonState == MouseButtonState.Pressed)
-            {
-                // Permite arrastar a janela
-                this.DragMove();
-            }
-        }
+        //private void BorderArrasto_Pressionado(object sender, MouseButtonEventArgs e)
+        //{
+        //    // Verifica se o botão esquerdo do mouse está pressionado
+        //    if (e.ButtonState == MouseButtonState.Pressed)
+        //    {
+        //        // Permite arrastar a janela
+        //        this.DragMove();
+        //    }
+        //}
 
-        private void FecharApp(object sender, RoutedEventArgs e)
-        {
-            this.Close();
-        }
+        //private void FecharApp(object sender, RoutedEventArgs e)
+        //{
+        //    this.Close();
+        //}
 
-        private async void ProjetaHDR_MenuButton_Checked(object sender, RoutedEventArgs e)
-        {
-            var buttonProjetaHDR = this.ProjetaHDR_Expanded;
-            if (buttonProjetaHDR == null)
-                return;
+        //private async void ProjetaHDR_MenuButton_Checked(object sender, RoutedEventArgs e)
+        //{
+        //    var buttonProjetaHDR = this.ProjetaHDR_Expanded;
+        //    if (buttonProjetaHDR == null)
+        //        return;
 
-            buttonProjetaHDR.Visibility = Visibility.Visible;
+        //    buttonProjetaHDR.Visibility = Visibility.Visible;
 
-            var addinName = "ProjetaHDR";
+        //    var addinName = "FirstProjetaHDR";
+        //    var revitVersion = this.RevitVersionComboBox.Text;
 
-            VService = new VersionService(addinName);
-            OnlineVService = new OnlineVersionService(addinName);
-            this.DataContext = OnlineVService;
 
-            if (VService.VerificarInstalacao() == true)
-            {
-                var InstalledVersion = VService.VerificarVersao();
-                this.InstalledVersionText.Text = InstalledVersion;
+        //    VService = new VersionService(addinName, revitVersion);
+        //    OnlineVService = new OnlineVersionService(addinName, revitVersion);
+        //    this.DataContext = OnlineVService;
 
-            }
-            else
-            {
-                this.InstalledVersionText.Text = "-";
-                VService.TypeVInstalled = new Version("0.0.0.0");
-            }
+        //    if (VService.VerificarInstalacao() == true)
+        //    {
+        //        var InstalledVersion = VService.VerificarVersao();
+        //        this.InstalledVersionText.Text = InstalledVersion;
 
-            var (latestVersion, lastFourVersions) = await OnlineVService.ObterVersoesAsync();
-            this.LatestVersionText.Text = latestVersion;
+        //    }
+        //    else
+        //    {
+        //        this.InstalledVersionText.Text = "-";
+        //        VService.TypeVInstalled = new Version("0.0.0.0");
+        //    }
 
-            if (latestVersion != "-")
-            {
-                VersionsComboBox.ItemsSource = lastFourVersions;
+        //    var (latestVersion, lastFourVersions) = await OnlineVService.ObterVersoesAsync();
+        //    this.LatestVersionText.Text = latestVersion;
 
-                //this.ButtonInstall.IsEnabled = true;
-                //this.VersionsComboBox.IsEnabled = true;
-            }                    
-            else
-            {
-                OnlineVService.TypeVLatest = new Version("0.0.0.0");
-            }
+        //    if (latestVersion != "-")
+        //    {
+        //        VersionsComboBox.ItemsSource = lastFourVersions;
+
+        //        //this.ButtonInstall.IsEnabled = true;
+        //        //this.VersionsComboBox.IsEnabled = true;
+        //    }                    
+        //    else
+        //    {
+        //        OnlineVService.TypeVLatest = new Version("0.0.0.0");
+        //    }
             
-            await OnlineVService.VersionCompare(VService.TypeVInstalled, OnlineVService.TypeVLatest);
-            var(boolInstall, boolAtt) =  await OnlineVService.CompareResult(VService.TypeVInstalled, OnlineVService.TypeVLatest);
+        //    await OnlineVService.VersionCompare(VService.TypeVInstalled, OnlineVService.TypeVLatest);
+        //    var(boolInstall, boolAtt) =  await OnlineVService.CompareResult(VService.TypeVInstalled, OnlineVService.TypeVLatest);
 
-            this.ButtonInstall.IsEnabled = boolInstall;
-            this.VersionsComboBox.IsEnabled = boolInstall;
-            this.ButtonAtt.IsEnabled = boolAtt;
+        //    this.ButtonInstall.IsEnabled = boolInstall;
+        //    this.VersionsComboBox.IsEnabled = boolInstall;
+        //    this.ButtonAtt.IsEnabled = boolAtt;
 
-        }
+        //}
 
-        private void ProjetaHDR_MenuButton_Unchecked(object sender, RoutedEventArgs e)
-        {
-            this.ProjetaHDR_Expanded.Visibility = Visibility.Hidden;
-            this.ButtonAtt.IsEnabled = false;
-            this.ButtonInstall.IsEnabled = false;
-        }
+        //private void ProjetaHDR_MenuButton_Unchecked(object sender, RoutedEventArgs e)
+        //{
+        //    this.ProjetaHDR_Expanded.Visibility = Visibility.Hidden;
+        //    this.ButtonAtt.IsEnabled = false;
+        //    this.ButtonInstall.IsEnabled = false;
+        //}
 
-        private async void ButtonInstall_Click(object sender, RoutedEventArgs e)
-        {
-            SelectedComboBoxVersion = this.VersionsComboBox.SelectedItem as string;
-            await OnlineVService.InstalarAddinAsync(SelectedComboBoxVersion);
+        //private async void ButtonInstall_Click(object sender, RoutedEventArgs e)
+        //{
+        //    SelectedComboBoxVersion = this.VersionsComboBox.SelectedItem as string;
+        //    await OnlineVService.InstalarAddinAsync(SelectedComboBoxVersion);
 
-            await Task.Delay(2000);
+        //    await Task.Delay(2000);
 
-            if (VService.VerificarInstalacao() == true)
-            {
-                var InstalledVersion = VService.VerificarVersao();
-                this.InstalledVersionText.Text = InstalledVersion;
+        //    if (VService.VerificarInstalacao() == true)
+        //    {
+        //        var InstalledVersion = VService.VerificarVersao();
+        //        this.InstalledVersionText.Text = InstalledVersion;
 
-            }
-            else
-            {
-                this.InstalledVersionText.Text = "-";
-                VService.TypeVInstalled = new Version("0.0.0.0");
-            }
+        //    }
+        //    else
+        //    {
+        //        this.InstalledVersionText.Text = "-";
+        //        VService.TypeVInstalled = new Version("0.0.0.0");
+        //    }
 
-            var (latestVersion, lastFourVersions) = await OnlineVService.ObterVersoesAsync();
-            this.LatestVersionText.Text = latestVersion;
+        //    var (latestVersion, lastFourVersions) = await OnlineVService.ObterVersoesAsync();
+        //    this.LatestVersionText.Text = latestVersion;
 
-            if (latestVersion != "-")
-            {
-                VersionsComboBox.ItemsSource = lastFourVersions;
+        //    if (latestVersion != "-")
+        //    {
+        //        VersionsComboBox.ItemsSource = lastFourVersions;
 
-                //this.ButtonInstall.IsEnabled = true;
-                //this.VersionsComboBox.IsEnabled = true;
-            }
-            else
-            {
-                OnlineVService.TypeVLatest = new Version("0.0.0.0");
-            }
+        //        //this.ButtonInstall.IsEnabled = true;
+        //        //this.VersionsComboBox.IsEnabled = true;
+        //    }
+        //    else
+        //    {
+        //        OnlineVService.TypeVLatest = new Version("0.0.0.0");
+        //    }
 
-            await OnlineVService.VersionCompare(VService.TypeVInstalled, OnlineVService.TypeVLatest);
-            var (boolInstall, boolAtt) = await OnlineVService.CompareResult(VService.TypeVInstalled, OnlineVService.TypeVLatest);
+        //    await OnlineVService.VersionCompare(VService.TypeVInstalled, OnlineVService.TypeVLatest);
+        //    var (boolInstall, boolAtt) = await OnlineVService.CompareResult(VService.TypeVInstalled, OnlineVService.TypeVLatest);
 
-            this.ButtonInstall.IsEnabled = boolInstall;
-            this.VersionsComboBox.IsEnabled = boolInstall;
-            this.ButtonAtt.IsEnabled = boolAtt;
+        //    this.ButtonInstall.IsEnabled = boolInstall;
+        //    this.VersionsComboBox.IsEnabled = boolInstall;
+        //    this.ButtonAtt.IsEnabled = boolAtt;
 
-        }
+        //}
 
-        private async void ButtonAtt_Click(object sender, RoutedEventArgs e)
-        {
-            await OnlineVService.InstalarAddinAsync("latest");
+        //private async void ButtonAtt_Click(object sender, RoutedEventArgs e)
+        //{
+        //    await OnlineVService.InstalarAddinAsync("latest");
 
-            await Task.Delay(2000);
+        //    await Task.Delay(2000);
 
-            if (VService.VerificarInstalacao() == true)
-            {
-                var InstalledVersion = VService.VerificarVersao();
-                this.InstalledVersionText.Text = InstalledVersion;
+        //    if (VService.VerificarInstalacao() == true)
+        //    {
+        //        var InstalledVersion = VService.VerificarVersao();
+        //        this.InstalledVersionText.Text = InstalledVersion;
 
-            }
-            else
-            {
-                this.InstalledVersionText.Text = "-";
-                VService.TypeVInstalled = new Version("0.0.0.0");
-            }
+        //    }
+        //    else
+        //    {
+        //        this.InstalledVersionText.Text = "-";
+        //        VService.TypeVInstalled = new Version("0.0.0.0");
+        //    }
 
-            var (latestVersion, lastFourVersions) = await OnlineVService.ObterVersoesAsync();
-            this.LatestVersionText.Text = latestVersion;
+        //    var (latestVersion, lastFourVersions) = await OnlineVService.ObterVersoesAsync();
+        //    this.LatestVersionText.Text = latestVersion;
 
-            if (latestVersion != "-")
-            {
-                VersionsComboBox.ItemsSource = lastFourVersions;
+        //    if (latestVersion != "-")
+        //    {
+        //        VersionsComboBox.ItemsSource = lastFourVersions;
 
-                //this.ButtonInstall.IsEnabled = true;
-                //this.VersionsComboBox.IsEnabled = true;
-            }
-            else
-            {
-                OnlineVService.TypeVLatest = new Version("0.0.0.0");
-            }
+        //        //this.ButtonInstall.IsEnabled = true;
+        //        //this.VersionsComboBox.IsEnabled = true;
+        //    }
+        //    else
+        //    {
+        //        OnlineVService.TypeVLatest = new Version("0.0.0.0");
+        //    }
 
-            await OnlineVService.VersionCompare(VService.TypeVInstalled, OnlineVService.TypeVLatest);
-            var (boolInstall, boolAtt) = await OnlineVService.CompareResult(VService.TypeVInstalled, OnlineVService.TypeVLatest);
+        //    await OnlineVService.VersionCompare(VService.TypeVInstalled, OnlineVService.TypeVLatest);
+        //    var (boolInstall, boolAtt) = await OnlineVService.CompareResult(VService.TypeVInstalled, OnlineVService.TypeVLatest);
 
-            this.ButtonInstall.IsEnabled = boolInstall;
-            this.VersionsComboBox.IsEnabled = boolInstall;
-            this.ButtonAtt.IsEnabled = boolAtt;
-        }
+        //    this.ButtonInstall.IsEnabled = boolInstall;
+        //    this.VersionsComboBox.IsEnabled = boolInstall;
+        //    this.ButtonAtt.IsEnabled = boolAtt;
+        //}
 
-        private void Logo_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
+        //private void Logo_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        //{
 
-        }
+        //}
 
        
     }

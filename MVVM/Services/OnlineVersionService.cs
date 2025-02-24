@@ -12,131 +12,127 @@ using System.Linq;
 
 namespace ProjetaUpdate
 {
-    public class OnlineVersionService : INotifyPropertyChanged
+    public class OnlineVersionService
     {
 
-        public Version TypeVLatest { get; set; }
-
-        private readonly string _gitubRealeses;
         private string _githubApiUrl;
-        private readonly string _revitAddinPath;
-        private readonly string _addinName;
-        private readonly string _myAddinPath;
-        string _versionTag;
-        private string _statusMessage;
-        public string StatusMessage
-        {
-            get { return _statusMessage; }
-            set
-            {
-                _statusMessage = value;
-                OnPropertyChanged(nameof(StatusMessage));
-            }
-        }
-        public event PropertyChangedEventHandler PropertyChanged;
+        private string _revitAddinPath;
+        public string SelectedVersionTag { get; set; }
+        public Version LatestTypeOfVersion { get; set; }
+        public string LatestVersion { get; set; }
+        public string GitHubReleases { get; set; }
+        public string MyAddinPath { get; set; }
+        public string VersionTag { get; set; }
+        public string AddinName { get; set; }
+        public string SelectedRevitVersion { get; set; }
 
+        public List<string> LastVersions { get; set; }
 
-        protected virtual void OnPropertyChanged(string propertyName)
+        public OnlineVersionService(string addinName, string revitVersion)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+            SelectedRevitVersion = revitVersion;
+            AddinName = addinName;
+            UpdateProps();
 
-        public OnlineVersionService(string AddinName)
-        {
-            _addinName = AddinName;
-            _myAddinPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),"Autodesk","Revit","Addins","2024",_addinName);
-            _revitAddinPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Autodesk", "Revit", "Addins", "2024");
-            _gitubRealeses = $"https://api.github.com/repos/gbragaricardo/{_addinName}/releases";
         }
 
 
 
-        public async Task<(string latestVersion, List<string> lastFourVersions)> ObterVersoesAsync()
+        public void UpdateProps()
         {
+            _revitAddinPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Autodesk", "Revit", "Addins", SelectedRevitVersion);
+            MyAddinPath = Path.Combine(_revitAddinPath, AddinName);
+            GitHubReleases = $"https://api.github.com/repos/gbragaricardo/{AddinName}/releases";
+        }
+
+
+        public async Task<(string latestVersion, List<string> lastFourVersions)> ObterVersoesAsync(IProgress<string> statusProgress = null)
+        {
+            UpdateProps();
+
             using (HttpClient client = new HttpClient())
             {
-                await AtualizarStatusComDelay("Buscando Versoes");
+                await DelayMessage(statusProgress, "Buscando Versoes");
 
                 client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0"); // GitHub exige um User-Agent
                 client.Timeout = TimeSpan.FromMinutes(10);
 
                 try
                 {
-                    string response = await client.GetStringAsync(_gitubRealeses);
+                    string response = await client.GetStringAsync(GitHubReleases);
                     using (JsonDocument doc = JsonDocument.Parse(response))
                     {
-                        List<string> versoes = new List<string>();
-                        string latestVersion = null;
+                        LastVersions = new List<string>();
+                        LatestVersion = null;
                         
                         foreach (JsonElement release in doc.RootElement.EnumerateArray())
                         {
                             if (release.TryGetProperty("tag_name", out JsonElement tag))
                             {
                                 string version = tag.GetString();
-                                 if (latestVersion == null)
+                                 if (LatestVersion == null)
                                 {
-                                    latestVersion = version; // Primeira versão encontrada é a mais recente
+                                    LatestVersion = version; // Primeira versão encontrada é a mais recente
                                 }
 
-                                versoes.Add(version);
+                                LastVersions.Add(version);
                             }
 
                             // Pegar apenas as últimas 4 versões
-                            if (versoes.Count >= 4)
+                            if (LastVersions.Count >= 4)
                                 break;
                         }
 
-                        if (latestVersion != null)
+                        if (LatestVersion != null)
                         {
-                            TypeVLatest = new Version(latestVersion);
+                            LatestTypeOfVersion = new Version(LatestVersion);
                         }
                         else
                         {
-                            TypeVLatest = new Version("0.0.0.0");
+                            LatestTypeOfVersion = new Version("0.0.0.0");
                         }
                         
 
-                        return (latestVersion, versoes);
+                        return (LatestVersion, LastVersions);
                     }
                 }
 
                 catch (Exception ex)
                 {
-                    TypeVLatest = new Version("0.0.0.0");
+                    LatestTypeOfVersion = new Version("0.0.0.0");
                     Debug.WriteLine($"Erro ao buscar versões: {ex.Message}");
-                    await AtualizarStatusComDelay("Erro ao buscar versoes");
-
+                    await DelayMessage(statusProgress, "Erro ao buscar versoes");
                     return ("-", new List<string>()); // Retorna null e lista vazia em caso de erro
                 }
             }
         }
 
-        public async Task InstalarAddinAsync(string VersionTag)
+        public async Task InstalarAddinAsync(string versionTag, IProgress<string> statusProgress = null)
         {
             try
             {
-                _versionTag = VersionTag;
+                VersionTag = versionTag;
 
-                if (_versionTag == null)
+                if (VersionTag == null)
                     return;
 
                 // Define a URL da API para obter informações da versão
-                _githubApiUrl = _versionTag.ToLower() == "latest" ? $"https://api.github.com/repos/gbragaricardo/{_addinName}/releases/latest"
-                                                                  : $"https://api.github.com/repos/gbragaricardo/{_addinName}/releases/tags/{_versionTag}";
+                _githubApiUrl = VersionTag.ToLower() == "latest" ? $"{GitHubReleases}/latest"
+                                                                 : $"{GitHubReleases}/tags/{VersionTag}";
 
                 string versionUrl = null;
 
-                string tempZipPath = Path.Combine(Path.GetTempPath(), $"{_addinName}.zip");
+                string tempZipPath = Path.Combine(Path.GetTempPath(), $"{AddinName}.zip");
                 // Verifica se o arquivo ZIP já existe no diretório temporário e o exclui
                 if (File.Exists(tempZipPath))
                 {
                     File.Delete(tempZipPath);
                 }
 
-                string tempExtractPath = Path.Combine(Path.GetTempPath(), $"{_addinName}_temp");
+                string tempExtractPath = Path.Combine(Path.GetTempPath(), $"{AddinName}_temp");
 
                 Debug.WriteLine("Obtendo URL da última/Tag versão...");
-                await AtualizarStatusComDelay("Sincronizando versão...");
+                await DelayMessage(statusProgress, "Sincronizando versão...");
 
                 using (HttpClient client = new HttpClient())
                 {
@@ -167,17 +163,17 @@ namespace ProjetaUpdate
                     if (string.IsNullOrEmpty(versionUrl))
                     {
                         Debug.WriteLine("Nenhum arquivo ZIP encontrado na release.");
-                        await AtualizarStatusComDelay("Erro: Nenhum arquivo ZIP encontrado.");
+                        await DelayMessage(statusProgress, "Erro: Nenhum arquivo ZIP encontrado.");
                         return;
                     }
 
                     Debug.WriteLine("Baixando arquivo ZIP...");
-                    await AtualizarStatusComDelay("Baixando arquivos...");
+                    await DelayMessage(statusProgress, "Baixando arquivos...");
 
                     byte[] zipData = await client.GetByteArrayAsync(versionUrl);
                     File.WriteAllBytes(tempZipPath, zipData);
 
-                    await AtualizarStatusComDelay("Download concluído");
+                    await DelayMessage(statusProgress, "Download concluído");
                 }
 
                 // Remove pasta temporária se já existir
@@ -187,29 +183,29 @@ namespace ProjetaUpdate
                 }
 
                 Debug.WriteLine("Extraindo arquivos...");
-                await AtualizarStatusComDelay("Extraindo arquivos...");
+                await DelayMessage(statusProgress, "Extraindo arquivos...");
 
                 ZipFile.ExtractToDirectory(tempZipPath, tempExtractPath);
 
                 // Encontra a pasta correta dentro do ZIP extraído
                 string[] extractedDirs = Directory.GetDirectories(tempExtractPath);
 
-                string extractedAddinPath = Array.Find(extractedDirs, dir => Path.GetFileName(dir) == _addinName);
+                string extractedAddinPath = Array.Find(extractedDirs, dir => Path.GetFileName(dir) == AddinName);
 
                 if (extractedAddinPath == null)
                 {
-                    Debug.WriteLine($"Pasta {_addinName} não encontrada no ZIP extraído.");
-                    await AtualizarStatusComDelay($"Erro: Pasta {_addinName} não encontrada.");
+                    Debug.WriteLine($"Pasta {AddinName} não encontrada no ZIP extraído.");
+                    await DelayMessage(statusProgress, $"Erro: Pasta {AddinName} não encontrada.");
                     return;
                 }
 
                 // Se a versão antiga existir, Excluir"
-                if (Directory.Exists(_myAddinPath))
+                if (Directory.Exists(MyAddinPath))
                 {
                     Console.WriteLine("Excluindo Versão Anterior...");
-                    await AtualizarStatusComDelay("Substituindo arquivos...");
+                    await DelayMessage(statusProgress, "Substituindo arquivos...");
 
-                    Directory.Delete(_myAddinPath, true);
+                    Directory.Delete(MyAddinPath, true);
                 }
 
                 // Se o addin antiga existir, Excluir"
@@ -218,7 +214,7 @@ namespace ProjetaUpdate
                 if (File.Exists(existingAddinFilePath))
                 {
                     Console.WriteLine("Excluindo Addin Anterior...");
-                    await AtualizarStatusComDelay("Substituindo arquivos...");
+                    await DelayMessage(statusProgress, "Substituindo arquivos...");
                     File.Delete(existingAddinFilePath);
                 }
 
@@ -237,24 +233,24 @@ namespace ProjetaUpdate
 
                 // Move a nova versão para o diretório do Revit Addins
                 Console.WriteLine("Instalando nova versão...");
-                await AtualizarStatusComDelay("Instalando nova versão...");
-                Directory.Move(extractedAddinPath, _myAddinPath);
+                await DelayMessage(statusProgress, "Instalando nova versão...");
+                Directory.Move(extractedAddinPath, MyAddinPath);
 
                 // Limpeza de arquivos temporários
                 File.Delete(tempZipPath);
                 Directory.Delete(tempExtractPath, true);
 
                 Console.WriteLine("Instalação concluída com sucesso.");
-                await AtualizarStatusComDelay("Instalação concluída com sucesso.");
+                await DelayMessage(statusProgress, "Instalação concluída com sucesso.");
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Erro na instalação: {ex.Message}");
-                await AtualizarStatusComDelay($"Erro na instalação: {ex.Message}");
+                await DelayMessage(statusProgress, $"Erro na instalação: {ex.Message}");
             }
         }
 
-        public async Task<int> VersionCompare(Version VInstall, Version VLatest)
+        public async Task<int> VersionCompare(Version VInstall, Version VLatest, IProgress<string> statusProgress = null)
         {
             int compareResult;
 
@@ -263,14 +259,14 @@ namespace ProjetaUpdate
                 
                 if ((VLatest == null && VInstall == null) && (VLatest.ToString() == "0.0.0.0" && VInstall.ToString() == "0.0.0.0"))
                 {
-                    await AtualizarStatusComDelay("Bad Request");
+                    await DelayMessage(statusProgress, "Bad Request");
                     compareResult = 0;
                     return compareResult;
                 }
 
                 else if (VLatest.ToString() == "0.0.0.0" || VLatest == null)
                 {
-                    await AtualizarStatusComDelay("Erro ao obter nova versao");
+                    await DelayMessage(statusProgress, "Erro ao obter nova versao");
                     compareResult = 1;
                     return compareResult;
                 }
@@ -278,7 +274,7 @@ namespace ProjetaUpdate
                 else if (VInstall == null || VInstall.ToString() == "0.0.0.0")
                 {
 
-                    await AtualizarStatusComDelay("Download disponivel");
+                    await DelayMessage(statusProgress, "Download disponivel");
                     compareResult = 2;
                     return compareResult;
                 }
@@ -288,17 +284,17 @@ namespace ProjetaUpdate
                     int compare = VInstall.CompareTo(VLatest);
                     if (compare == 0)
                     {
-                        await AtualizarStatusComDelay("Versão atualizada!");
+                        await DelayMessage(statusProgress, "Versão atualizada!");
                         compareResult = 3;
                     }
                     else if (compare < 0)
                     {
-                        await AtualizarStatusComDelay($"Nova versão disponível: {VLatest}");
+                        statusProgress?.Report($"Nova versão disponível: {VLatest}");
                         compareResult = 4;
                     }
                     else // comparacao > 0
                     {
-                        await AtualizarStatusComDelay("Versão Beta");
+                        await DelayMessage(statusProgress, "Versão Beta");
                         compareResult = 5;
                     }
 
@@ -307,7 +303,7 @@ namespace ProjetaUpdate
             }
             catch (Exception ex)
             {
-                await AtualizarStatusComDelay($"Error: {ex.Message}");
+                await DelayMessage(statusProgress, $"Error: {ex.Message}");
                 compareResult = 0;
                 return compareResult;
             }
@@ -316,7 +312,7 @@ namespace ProjetaUpdate
         public async Task<(bool, bool)> CompareResult(Version VInstall, Version VLatest)
         {
             bool buttonInstall = false;
-            bool buttonAtt = false;
+            bool buttonUpdate = false;
 
             switch (await VersionCompare(VInstall, VLatest))
             {
@@ -325,22 +321,19 @@ namespace ProjetaUpdate
                 case 2: buttonInstall = true; break;
                 case 3: buttonInstall = true; break;
                 case 4: buttonInstall = true;
-                        buttonAtt = true;
-                        break;
-
+                        buttonUpdate  = true; break;
                 case 5: buttonInstall = true; break;
 
                 default: break;   
             }
-
-
-            return(buttonInstall, buttonAtt);
+            return(buttonInstall, buttonUpdate);
         }
 
-        private async Task AtualizarStatusComDelay(string novaMensagem, int delayMs = 500)
+
+        private async Task DelayMessage(IProgress<string> progress, string mensagem, int delayMs = 500)
         {
-            await Task.Delay(delayMs); // Aguarda o tempo definido sem bloquear a UI
-            StatusMessage = novaMensagem; // Atualiza a mensagem após o tempo de espera
+            progress?.Report(mensagem);
+            await Task.Delay(delayMs);
         }
     }
 }
