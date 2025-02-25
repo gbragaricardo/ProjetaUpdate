@@ -14,23 +14,24 @@ namespace ProjetaUpdate.MVVM.ViewModels
 
         private readonly VersionService _vService;
         private readonly OnlineVersionService _onlineVService;
+        public List<string> AvailableRevitVersions { get; } = new List<string> { "2024", "2022" };
+        public IProgress<string> StatusProgress { get; }
+
 
         //Mensagem de status na parte de baixo
-        //private Object _statusMessage;
-        //public Object StatusMessage
-        //{
-        //    get { return _statusMessage; }
-        //    set
-        //    {
-        //        if (_statusMessage != value)
-        //        {
-        //            _statusMessage = value;
-        //            OnPropertyChanged();
-        //        }
-        //    }
-        //}
-
-        public IProgress<string> StatusMessage { get; }
+        private Object _statusMessage;
+        public Object StatusMessage
+        {
+            get { return _statusMessage; }
+            set
+            {
+                if (_statusMessage != value)
+                {
+                    _statusMessage = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
 
         //Nome do Addin usado nas buscas e etc. Ex: ProjetaHDR
@@ -40,8 +41,13 @@ namespace ProjetaUpdate.MVVM.ViewModels
             get { return _addinName; }
             set
             {
-                _addinName = value;
-                OnPropertyChanged();
+                if (_addinName != value)
+                {
+                    _addinName = value;
+                    OnPropertyChanged();
+                    UpdateUiAndProps();
+                }
+                
             }
         }
 
@@ -70,7 +76,7 @@ namespace ProjetaUpdate.MVVM.ViewModels
         }
 
         //Versao do revit selecionada pelo usuario
-        private string _revitVersion;
+        private string _revitVersion = "2024";
         public string SelectedRevitVersion
         {
             get { return _revitVersion; }
@@ -80,11 +86,9 @@ namespace ProjetaUpdate.MVVM.ViewModels
                 {
                     _revitVersion = value;
                     OnPropertyChanged();
-
-                    _vService.SelectedRevitVersion = value;
-                    _vService.AddinName = AddinName;
-                    
+                    UpdateUiAndProps();
                     InstalledVersion = _vService.VerifyInstallAndVersion();
+
                 }
             }
         }
@@ -100,6 +104,8 @@ namespace ProjetaUpdate.MVVM.ViewModels
                 {
                     _selectedAddinVersion = value;
                     OnPropertyChanged();
+
+                    _onlineVService.VersionTag = value;
                 }
 
             }
@@ -117,25 +123,31 @@ namespace ProjetaUpdate.MVVM.ViewModels
             }
         }
 
-        private string _canInstall;
-        public string CanInstall
+        private bool _canInstall;
+        public bool CanInstall
         {
             get { return _canInstall; }
             set
             {
+                if (_canInstall != value)
+                {
                 _canInstall = value;
                 OnPropertyChanged();
+                }
             }
         }
 
-        private string _canUpdate;
-        public string CanUpdate
+        private bool _canUpdate;
+        public bool CanUpdate
         {
             get { return _canUpdate; }
             set
             {
-                _canUpdate = value;
-                OnPropertyChanged();
+                if (_canUpdate != value)
+                {
+                    _canUpdate = value;
+                    OnPropertyChanged();
+                }
             }
         }
 
@@ -145,6 +157,7 @@ namespace ProjetaUpdate.MVVM.ViewModels
         #region RelayCommands
         public RelayCommand InstallButton { get; set; }
         public RelayCommand UpdateButton { get; set; }
+        public RelayCommand LoadVersionsButton { get; set; }
 
 
         #endregion
@@ -154,14 +167,19 @@ namespace ProjetaUpdate.MVVM.ViewModels
         #region Constructor
         public AddinDownloadViewModel()
         {
+            StatusProgress = new Progress<string>(msg => StatusMessage = msg);
+
             InstallButton = new RelayCommand(async o => await InstallAddin());
 
             UpdateButton = new RelayCommand(async o => await UpdateAddin());
+
+            LoadVersionsButton = new RelayCommand(o => LoadVersions());
 
             _vService = new VersionService(AddinName, SelectedRevitVersion);
             _onlineVService = new OnlineVersionService(AddinName, SelectedRevitVersion);
 
             LoadVersions();
+
         }
         #endregion
 
@@ -169,25 +187,46 @@ namespace ProjetaUpdate.MVVM.ViewModels
         //Methods
         #region Methods
 
+        public void UpdateUiAndProps()
+        {
+            _vService.SelectedRevitVersion = SelectedRevitVersion;
+            _vService.AddinName = AddinName;
+            _vService.UpdateProps();
+
+            _onlineVService.SelectedRevitVersion = SelectedRevitVersion;
+            _onlineVService.AddinName = AddinName;
+            _onlineVService.SelectedVersionTag = SelectedAddinVersion;
+            _onlineVService.UpdateProps();
+        }
+
         public async void LoadVersions()
         {
             InstalledVersion = _vService.VerifyInstallAndVersion();
 
-            (LatestVersion, AllLatestVersion) = await _onlineVService.ObterVersoesAsync(StatusMessage);
-            var (_canInstall, _canUpdate) = await _onlineVService.CompareResult(_vService.InstalledTypeOfVersion, _onlineVService.LatestTypeOfVersion);
-            
+            (LatestVersion, AllLatestVersion) = await _onlineVService.ObterVersoesAsync(StatusProgress);
+            await _onlineVService.VersionCompare(_vService.InstalledTypeOfVersion, _onlineVService.LatestTypeOfVersion, StatusProgress);
+            (_canInstall, _canUpdate) = await _onlineVService.CompareResult(_vService.InstalledTypeOfVersion, _onlineVService.LatestTypeOfVersion);
+
+            UpdateUiAndProps();
+            InstalledVersion = _vService.VerifyInstallAndVersion();
+
+            OnPropertyChanged(nameof(CanInstall));
+            OnPropertyChanged(nameof(CanUpdate));
         }
 
         private async Task InstallAddin()
         {
-            await _onlineVService.InstalarAddinAsync(SelectedAddinVersion, StatusMessage);
+            CanInstall = CanUpdate = false;
+            await _onlineVService.InstalarAddinAsync(SelectedAddinVersion, StatusProgress);
+            UpdateUiAndProps();
             LoadVersions();
         }
 
         private async Task UpdateAddin()
         {
-
-            await _onlineVService.InstalarAddinAsync("latest", StatusMessage);
+            CanInstall = CanUpdate = false;
+            await _onlineVService.InstalarAddinAsync("latest", StatusProgress);
+            UpdateUiAndProps();
             LoadVersions();
         }
 

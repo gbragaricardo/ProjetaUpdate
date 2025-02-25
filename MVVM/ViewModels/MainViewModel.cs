@@ -38,14 +38,22 @@ namespace ProjetaUpdate.MVVM.ViewModels
             });
 
 
-            AddinDownloadViewCommand = new RelayCommand(o =>
+            AddinDownloadViewCommand = new RelayCommand(parameter =>
             {
+                string addinName = parameter as string;
+
                 if (AddinDownloadVM == null)
                 {
-                    AddinDownloadVM = new AddinDownloadViewModel();
+                    AddinDownloadVM = new AddinDownloadViewModel{ AddinName = addinName };
+                    CurrentViewModel = AddinDownloadVM;
+                }
+                else
+                {
+                    AddinDownloadVM.AddinName = addinName;
+                    CurrentViewModel = AddinDownloadVM;
+                    AddinDownloadVM.LoadVersions();
                 }
 
-                CurrentViewModel = AddinDownloadVM;
             });
 
         }

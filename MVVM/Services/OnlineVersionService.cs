@@ -256,17 +256,17 @@ namespace ProjetaUpdate
 
             try
             {
-                
+
                 if ((VLatest == null && VInstall == null) && (VLatest.ToString() == "0.0.0.0" && VInstall.ToString() == "0.0.0.0"))
                 {
-                    await DelayMessage(statusProgress, "Bad Request");
+                     await DelayMessage(statusProgress, "Bad Request");
                     compareResult = 0;
                     return compareResult;
                 }
 
                 else if (VLatest.ToString() == "0.0.0.0" || VLatest == null)
                 {
-                    await DelayMessage(statusProgress, "Erro ao obter nova versao");
+                     await DelayMessage(statusProgress, "Erro ao obter nova versao");
                     compareResult = 1;
                     return compareResult;
                 }
@@ -289,7 +289,7 @@ namespace ProjetaUpdate
                     }
                     else if (compare < 0)
                     {
-                        statusProgress?.Report($"Nova versão disponível: {VLatest}");
+                        await DelayMessage(statusProgress, $"Nova versão disponível: {VLatest}");
                         compareResult = 4;
                     }
                     else // comparacao > 0
@@ -309,10 +309,12 @@ namespace ProjetaUpdate
             }
         }
 
+
+
         public async Task<(bool, bool)> CompareResult(Version VInstall, Version VLatest)
         {
             bool buttonInstall = false;
-            bool buttonUpdate = false;
+            bool buttonAtt = false;
 
             switch (await VersionCompare(VInstall, VLatest))
             {
@@ -320,13 +322,18 @@ namespace ProjetaUpdate
                 case 1: break;
                 case 2: buttonInstall = true; break;
                 case 3: buttonInstall = true; break;
-                case 4: buttonInstall = true;
-                        buttonUpdate  = true; break;
+                case 4:
+                    buttonInstall = true;
+                    buttonAtt = true;
+                    break;
+
                 case 5: buttonInstall = true; break;
 
-                default: break;   
+                default: break;
             }
-            return(buttonInstall, buttonUpdate);
+
+
+            return (buttonInstall, buttonAtt);
         }
 
 

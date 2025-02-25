@@ -44,7 +44,7 @@ namespace ProjetaUpdate
                 return VerificarVersao();
         }
 
-        private void UpdateProps()
+        public void UpdateProps()
         {
             AddinPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), $@"Autodesk\Revit\Addins\{SelectedRevitVersion}\{AddinName}");
         }

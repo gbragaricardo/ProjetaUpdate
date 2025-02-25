@@ -8,27 +8,32 @@
         <!-- Style Setters -->
         <Style.Setters>
 
-            <Setter Property="VerticalAlignment" Value="Stretch"/>
-            <Setter Property="HorizontalAlignment" Value="Stretch"/>
-            <Setter Property="FontFamily" Value="pack://application:,,,/Fonts/#Barlow"/>
-            <Setter Property="FontSize" Value="16"/>
-
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="IsEnabled" Value="False"/>
-
-
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Button}">
-                        <Border Background="{TemplateBinding Background}" CornerRadius="5">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <Border CornerRadius="5"
+                                Background="#4C0105">
+                            <Border.Effect>
+                                <DropShadowEffect Color="Black" 
+                                                  Direction="320" 
+                                                  ShadowDepth="5" 
+                                                  BlurRadius="10" 
+                                                  Opacity="0.5"/>
+                            </Border.Effect>
+
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                              VerticalAlignment="Center"/>
+                            
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
 
+
+            <Setter Property="FontFamily" Value="pack://application:,,,/Fonts/#Barlow"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
         </Style.Setters>
         <!-- Style Setters -->
         
@@ -36,13 +41,50 @@
         <!-- Style Triggers -->
         <Style.Triggers>
             
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="#16559F"/>
+                <Trigger Property="IsMouseOver" Value="True">
 
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Border CornerRadius="5"
+                                    Background="#16559F">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
             </Trigger>
 
+
+            <Trigger Property="IsPressed" Value="True">
+
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Border CornerRadius="5"
+                        Background="#009587">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
+            
+            
             <Trigger Property="IsEnabled" Value="False">
-                <Setter Property="Background" Value="#828282"/>
+
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Border CornerRadius="5"
+                                    Background="#828282">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+
+                <!--<Setter Property="Background" Value="#828282"/>-->
             </Trigger>
 
             

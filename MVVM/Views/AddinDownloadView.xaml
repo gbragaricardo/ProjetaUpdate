@@ -10,7 +10,7 @@
              d:DesignHeight="410" d:DesignWidth="585">
  
     
-    <Border Padding="20 50 20 0">
+    <Border Padding="20">
 
         <!-- Stack Version/Actions -->
         <StackPanel>
@@ -25,11 +25,10 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- Border Latest Version -->
-                <Border Grid.Column="0"
+                <Button Grid.Column="0"
                         Margin= "0 0 15 0"
-                        Background="#4C0105"
-                        CornerRadius="5"
-                        Style="{StaticResource CommonBorder}">
+                        Style="{StaticResource ActionButtons}"
+                        Command="{Binding LoadVersionsButton}">
 
                     <StackPanel>
                         <TextBlock Text="ULTIMA VERSAO"
@@ -39,7 +38,7 @@
                                    Style="{StaticResource CommonTextBlock}"/>
                     </StackPanel>
 
-                </Border>
+                </Button>
                 <!-- Border Latest Version -->
 
                 <!-- Border Installed Version -->
@@ -74,26 +73,30 @@
 
                 <!-- Border Install -->
 
-                    <Button Content="INSTALAR" 
-                            Style="{StaticResource ActionButtons}"
-                            IsEnabled="{Binding CanInstall, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            Command="{Binding InstallButton}"/>
-                    <!-- Border Install -->
+                <Button Content="INSTALAR" 
+                        Grid.Column="0"
+                        Margin="0 0 15 0"
+                        Style="{StaticResource ActionButtons}"
+                        IsEnabled="{Binding CanInstall, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        Command="{Binding InstallButton}"/>
+                <!-- Border Install -->
 
                 <!-- Border Update -->
-                <Border Grid.Column="1"
+                <!--<Border Grid.Column="1"
                     Margin= "15 0 0 0"
                     Background="#4C0105"
                     CornerRadius="5"
-                    Style="{StaticResource CommonBorder}">
+                    Style="{StaticResource CommonBorder}">-->
 
 
-                    <Button Content="ATUALIZAR"      
-                            Style="{StaticResource ActionButtons}"
-                            IsEnabled="{Binding CanUpdate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            Command="{Binding UpdateButton}"/>
+                <Button Grid.Column="1"
+                        Margin="15 0 0 0"
+                        Content="ATUALIZAR"      
+                        Style="{StaticResource ActionButtons}"
+                        IsEnabled="{Binding CanUpdate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        Command="{Binding UpdateButton}"/>
 
-                </Border>
+                <!--</Border>-->
                 <!-- Border Att -->
 
             </Grid>
@@ -107,23 +110,21 @@
 
                 <ComboBox Margin="0 0 15 0"                                        
                           Style="{StaticResource ComboBox}"
-                          IsEnabled="True"
-                          ItemsSource="{Binding AllLatestVersion}"
-                          Text="{Binding SelectedAddinVersion, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                          ItemsSource="{Binding AllLatestVersion, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          Text="{Binding SelectedAddinVersion, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          IsEnabled="{Binding CanInstall, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                 </ComboBox>
 
             </Grid>
 
-            <ComboBox Margin="0 0 15 0"   
-                      IsEnabled="True"
+            <ComboBox Margin="0 0 15 15"
                       Style="{StaticResource ComboBox}"
                       HorizontalAlignment="Left"
                       Width="257.5" Height="25.2"
-                      Text="{Binding SelectedRevitVersion, UpdateSourceTrigger=PropertyChanged}">
-                
-                <ComboBoxItem>2024</ComboBoxItem>
-                <ComboBoxItem>2022</ComboBoxItem>
-                
+                      SelectedIndex="0"
+                      SelectedItem="{Binding SelectedRevitVersion, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      ItemsSource="{Binding AvailableRevitVersions}"   
+                      IsEnabled="True"  >
             </ComboBox>
 
             <Grid>
