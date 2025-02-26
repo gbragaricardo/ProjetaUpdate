@@ -12,8 +12,8 @@
         ResizeMode="NoResize"
         Background="Transparent"
         AllowsTransparency="True"
-        Icon="Resources/Setup.ico"
-        >
+        WindowStartupLocation="CenterScreen"
+        Icon="Resources/Setup.ico">
 
     <Window.DataContext>
         <viewModel:MainViewModel/>

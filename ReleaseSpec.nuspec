@@ -8,7 +8,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <license type="expression">MIT</license>
     <!-- <icon>icon.png</icon> -->
-    <projectUrl>http://project_url_here_or_delete_this_line/</projectUrl>
+    <!-- <projectUrl>http://project_url_here_or_delete_this_line/</projectUrl> -->
     <description>Desktop App For Revit Addins Update</description>
     <releaseNotes>Initial Release</releaseNotes>
     <copyright>2025</copyright>
