@@ -139,6 +139,15 @@
 
                             <!-- ProjetaHDR -->
 
+                            <!-- ProjetaHDR -->
+                            <RadioButton Content="PROJETA ARQ"
+                                         Tag="ProjetaARQ"
+                                         Style="{StaticResource MenuButtonTheme}"
+                                         Command="{Binding AddinDownloadViewCommand}"
+                                         CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"/>
+
+                            <!-- ProjetaHDR -->
+
                             <!-- TESTE -->
                             <RadioButton Visibility="Visible"
                                          Content="FIRST PROJETA HDR"
