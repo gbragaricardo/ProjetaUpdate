@@ -140,7 +140,7 @@
                             <!-- ProjetaHDR -->
 
                             <!-- TESTE -->
-                            <RadioButton Visibility="Hidden"
+                            <RadioButton Visibility="Visible"
                                          Content="FIRST PROJETA HDR"
                                          Tag="FirstProjetaHDR"
                                          Style="{StaticResource MenuButtonTheme}"
