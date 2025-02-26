@@ -12,6 +12,7 @@
         ResizeMode="NoResize"
         Background="Transparent"
         AllowsTransparency="True"
+        Icon="Resources/Setup.ico"
         >
 
     <Window.DataContext>
