@@ -7,11 +7,13 @@ public static class ShortcutHelper
     public static void CreateShortcut(string shortcutName, string targetPath, string iconPath)
     {
         string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+        string firstShortcut = Path.Combine(desktopPath, $"ProjetaUpdate.lnk");
         string shortcutLocation = Path.Combine(desktopPath, $"{shortcutName}.lnk");
 
         // Se existir um atalho anterior, apaga antes de criar o novo
-        if (System.IO.File.Exists(shortcutLocation))
+        if (System.IO.File.Exists(shortcutLocation) || System.IO.File.Exists(firstShortcut))
         {
+            System.IO.File.Delete(firstShortcut);
             System.IO.File.Delete(shortcutLocation);
         }
 

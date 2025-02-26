@@ -37,8 +37,9 @@ namespace ProjetaUpdate
                         MessageBox.Show("Nova versão disponível! O aplicativo será atualizado e reiniciado.", "Atualização Disponível", MessageBoxButton.OK, MessageBoxImage.Information);
 
                         await updateManager.UpdateApp();
-                        UpdateManager.RestartApp();
                         SetupShortcut();
+
+                        UpdateManager.RestartApp();
                         return true;
                     }
                 }
@@ -58,7 +59,7 @@ namespace ProjetaUpdate
             string iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "Setup.ico");
 
             // Criar atalho com nome formatado "Projeta\nUpdate"
-            ShortcutHelper.CreateShortcut("Teste", exePath, iconPath);
+            ShortcutHelper.CreateShortcut("Projeta Update", exePath, iconPath);
         }
 
     }
