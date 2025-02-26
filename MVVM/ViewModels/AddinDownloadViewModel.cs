@@ -151,6 +151,20 @@ namespace ProjetaUpdate.MVVM.ViewModels
             }
         }
 
+        private bool _canYearChange;
+        public bool CanYearChange
+        {
+            get { return _canYearChange; }
+            set
+            {
+                if (_canYearChange != value)
+                {
+                    _canYearChange = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         #endregion
 
         //RelayCommands
@@ -201,6 +215,8 @@ namespace ProjetaUpdate.MVVM.ViewModels
 
         public async void LoadVersions()
         {
+            CanYearChange = false;
+
             InstalledVersion = _vService.VerifyInstallAndVersion();
 
             (LatestVersion, AllLatestVersion) = await _onlineVService.ObterVersoesAsync(StatusProgress);
@@ -212,22 +228,33 @@ namespace ProjetaUpdate.MVVM.ViewModels
 
             OnPropertyChanged(nameof(CanInstall));
             OnPropertyChanged(nameof(CanUpdate));
+
+            CanYearChange = true;
         }
 
         private async Task InstallAddin()
         {
+            CanYearChange = false;
+
             CanInstall = CanUpdate = false;
             await _onlineVService.InstalarAddinAsync(SelectedAddinVersion, StatusProgress);
             UpdateUiAndProps();
             LoadVersions();
+
+            CanYearChange = true;
         }
 
         private async Task UpdateAddin()
         {
+            CanYearChange = false;
+
             CanInstall = CanUpdate = false;
             await _onlineVService.InstalarAddinAsync("latest", StatusProgress);
             UpdateUiAndProps();
             LoadVersions();
+
+            CanYearChange = true;
+
         }
 
         #endregion

@@ -39,10 +39,8 @@
 
             <!-- Border Da Window-->
             <Border Grid.Row="0"
-                    Background="#4C0105"
-                    CornerRadius="10 10 0 0"
-                    Style="{StaticResource CommonBorder}"
-                    MouseLeftButtonDown="BorderArrasto_Pressionado">
+                    Style="{StaticResource WindowBorder}"
+                    MouseLeftButtonDown="DragMoveBorder">
 
                 <Grid>
 
@@ -64,7 +62,8 @@
                                 VerticalContentAlignment="Center"
                                 HorizontalContentAlignment="Center"
                                 FontSize="14"
-                                Style="{StaticResource NormalButtonSelect}"/>
+                                Style="{StaticResource NormalButtonSelect}"
+                                Command="{Binding MinimizeAppCommand}"/>
                         
                     </Border>
                     <!-- Botão Minimizar -->
@@ -81,7 +80,7 @@
                         <Button Content="X" 
                                 FontSize="14"
                                 Style="{StaticResource NormalButtonSelect}"
-                                Click="FecharApp"/>
+                                Command="{Binding CloseAppCommand}"/>
 
                     </Border>
                 <!-- Botão Fechar -->
@@ -140,7 +139,8 @@
                             <!-- ProjetaHDR -->
 
                             <!-- TESTE -->
-                            <RadioButton Content="FIRST PROJETA HDR"
+                            <RadioButton Visibility="Hidden"
+                                         Content="FIRST PROJETA HDR"
                                          Tag="FirstProjetaHDR"
                                          Style="{StaticResource MenuButtonTheme}"
                                          Command="{Binding AddinDownloadViewCommand}"

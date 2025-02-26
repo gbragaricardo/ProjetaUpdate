@@ -20,25 +20,14 @@ namespace ProjetaUpdate
     /// </summary>
     public partial class MainWindow : Window
     {
-
         public MainWindow()
         {
             InitializeComponent();
         }
 
-        private void BorderArrasto_Pressionado(object sender, MouseButtonEventArgs e)
+        private void DragMoveBorder(object sender, MouseButtonEventArgs e)
         {
-            // Verifica se o botão esquerdo do mouse está pressionado
-            if (e.ButtonState == MouseButtonState.Pressed)
-            {
-                // Permite arrastar a janela
-                this.DragMove();
-            }
-        }
-
-        private void FecharApp(object sender, RoutedEventArgs e)
-        {
-            this.Close();
+            this.DragMove();
         }
     }
 }

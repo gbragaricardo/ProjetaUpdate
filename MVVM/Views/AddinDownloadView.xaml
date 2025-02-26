@@ -124,7 +124,7 @@
                       SelectedIndex="0"
                       SelectedItem="{Binding SelectedRevitVersion, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       ItemsSource="{Binding AvailableRevitVersions}"   
-                      IsEnabled="True"  >
+                      IsEnabled="{Binding CanYearChange, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  >
             </ComboBox>
 
             <Grid>

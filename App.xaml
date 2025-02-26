@@ -14,6 +14,8 @@
                 <ResourceDictionary Source="Resources/Themes/CommonTextBlock.xaml"/>
                 <ResourceDictionary Source="Resources/Themes/ActionButtons.xaml"/>
                 <ResourceDictionary Source="Resources/Themes/ComboBox.xaml"/>
+                <ResourceDictionary Source="Resources/Themes/WindowBorderTheme.xaml"/>
+
             </ResourceDictionary.MergedDictionaries>
 
             <!-- **************************************************************************** -->
