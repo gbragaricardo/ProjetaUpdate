@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using IWshRuntimeLibrary;
 using Squirrel;
 
 namespace ProjetaUpdate
@@ -25,6 +27,9 @@ namespace ProjetaUpdate
         {
             try
             {
+                string desktopShortcut = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "ProjetaUpdater.lnk");
+                string iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "Setup.ico");
+
                 using (var updateManager = await UpdateManager.GitHubUpdateManager(@"https://github.com/gbragaricardo/ProjetaUpdate"))
                 {
                     var updateInfo = await updateManager.CheckForUpdate();
@@ -35,7 +40,8 @@ namespace ProjetaUpdate
 
                         await updateManager.UpdateApp();
 
-                        // Reinicia o aplicativo após a atualização
+                        SetupShortcut();
+
                         UpdateManager.RestartApp();
                         return true;
                     }
@@ -47,6 +53,15 @@ namespace ProjetaUpdate
             }
 
             return false; // Nenhuma atualização foi aplicada
+        }
+
+        private static void SetupShortcut()
+        {
+            string exePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Projeta\nUpdate.exe");
+            string iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "Setup.ico");
+
+            // Criar atalho com nome formatado "Projeta\nUpdate"
+            ShortcutHelper.CreateShortcut("Projeta Update", exePath, iconPath);
         }
     }
 }
