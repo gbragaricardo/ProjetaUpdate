@@ -174,7 +174,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MVVM\Services\OnlineVersionService.cs" />
-    <Compile Include="MVVM\Services\ShortcutHelper.cs" />
     <Compile Include="MVVM\Services\VersionService.cs" />
     <Compile Include="MVVM\ViewModels\AddinDownloadViewModel.cs" />
     <Compile Include="MVVM\ViewModels\HomeViewModel.cs" />

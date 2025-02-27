@@ -3,13 +3,13 @@
   <metadata>
     <id>ProjetaUpdate</id>
     <version>0.0.0</version>
-    <title>ProjetaUpdater</title>
+    <title>ProjetaUpdate</title>
     <authors>RicardoBraga</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <license type="expression">MIT</license>
     <!-- <icon>icon.png</icon> -->
     <!-- <projectUrl>http://project_url_here_or_delete_this_line/</projectUrl> -->
-    <description>Desktop App For Revit Addins Update</description>
+    <description>Plugins Updater</description>
     <releaseNotes>Initial Release</releaseNotes>
     <copyright>2025</copyright>
     <tags>Revit Update Addins</tags>

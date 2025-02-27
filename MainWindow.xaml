@@ -118,11 +118,9 @@
                     <!-- Border Menu Buttons -->
                     <Border Padding="0 20 0 0">
 
-                        <!-- Stack Menu Buttons -->                     
+                        <!-- Stack Menu Buttons -->
                         <StackPanel>
-
                             
-
                             <!-- HOME -->
                             <RadioButton Content="HOME"
                                          Style="{StaticResource MenuButtonTheme}"
@@ -140,7 +138,8 @@
                             <!-- ProjetaHDR -->
 
                             <!-- ProjetaHDR -->
-                            <RadioButton Content="PROJETA ARQ"
+                            <RadioButton Visibility="Hidden"
+                                         Content="PROJETA ARQ"
                                          Tag="ProjetaARQ"
                                          Style="{StaticResource MenuButtonTheme}"
                                          Command="{Binding AddinDownloadViewCommand}"
@@ -157,6 +156,7 @@
                                          CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"/>
 
                             <!-- TESTE -->
+                            
                         </StackPanel>
                         <!-- Stack Menu Buttons -->
                         
