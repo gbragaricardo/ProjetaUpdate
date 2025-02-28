@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package >
+  <metadata>
+    <id>ProjetaUpdate</id>
+    <version>0.0.0</version>
+    <title>ProjetaUpdate</title>
+    <authors>RicardoBraga</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <!-- <icon>icon.png</icon> -->
+    <!-- <projectUrl>http://project_url_here_or_delete_this_line/</projectUrl> -->
+    <description>Plugins Updater</description>
+    <releaseNotes>Initial Release</releaseNotes>
+    <copyright>2025</copyright>
+    <tags>Revit Update Addins</tags>
+  </metadata>
+
+  <files>
+    <file src="bin\Release\**" target="lib\net472"/>
+  </files>
+</package>
