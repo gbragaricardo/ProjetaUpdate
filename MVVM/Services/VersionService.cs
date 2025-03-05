@@ -39,9 +39,14 @@ namespace ProjetaUpdate
             UpdateProps();
 
             if (VerificarInstalacao() == false)
+            {
+                InstalledTypeOfVersion = null;
                 return "-";
+            }
             else
+            {
                 return VerificarVersao();
+            }
         }
 
         public void UpdateProps()

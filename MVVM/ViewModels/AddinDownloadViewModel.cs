@@ -88,6 +88,7 @@ namespace ProjetaUpdate.MVVM.ViewModels
                     OnPropertyChanged();
                     UpdateUiAndProps();
                     InstalledVersion = _vService.VerifyInstallAndVersion();
+                    _onlineVService.VersionCompare(_vService.InstalledTypeOfVersion, _onlineVService.LatestTypeOfVersion, StatusProgress);
 
                 }
             }
