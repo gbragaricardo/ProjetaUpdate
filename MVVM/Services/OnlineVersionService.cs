@@ -271,7 +271,7 @@ namespace ProjetaUpdate
                     return compareResult;
                 }
 
-                else if (VInstall == null || VInstall.ToString() == "0.0.0.0")
+                else if (VInstall == null || VInstall.ToString() == "-" || VInstall.ToString() == "0.0.0.0")
                 {
 
                     await DelayMessage(statusProgress, "Download disponivel");
