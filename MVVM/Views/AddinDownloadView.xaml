@@ -26,7 +26,7 @@
 
                 <!-- Border Latest Version -->
                 <Button Grid.Column="0"
-                        Margin= "0 0 15 0"
+                        Margin= "5 0 15 0"
                         Style="{StaticResource ActionButtons}"
                         Command="{Binding LoadVersionsButton}">
 
@@ -43,7 +43,7 @@
 
                 <!-- Border Installed Version -->
                 <Border Grid.Column="1"
-                        Margin= "15 0 0 0"
+                        Margin= "15 0 5 0"
                         Background="#4C0105"
                         CornerRadius="5"
                         Style="{StaticResource CommonBorder}">
@@ -75,7 +75,7 @@
 
                 <Button Content="INSTALAR" 
                         Grid.Column="0"
-                        Margin="0 0 15 0"
+                        Margin="5 0 15 0"
                         Style="{StaticResource ActionButtons}"
                         IsEnabled="{Binding CanInstall, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         Command="{Binding InstallButton}"/>
@@ -90,7 +90,7 @@
 
 
                 <Button Grid.Column="1"
-                        Margin="15 0 0 0"
+                        Margin="15 0 5 0"
                         Content="ATUALIZAR"      
                         Style="{StaticResource ActionButtons}"
                         IsEnabled="{Binding CanUpdate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
