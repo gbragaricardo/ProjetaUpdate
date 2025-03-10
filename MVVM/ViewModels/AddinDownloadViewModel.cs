@@ -226,6 +226,7 @@ namespace ProjetaUpdate.MVVM.ViewModels
 
             UpdateUiAndProps();
             InstalledVersion = _vService.VerifyInstallAndVersion();
+            await _onlineVService.VersionCompare(_vService.InstalledTypeOfVersion, _onlineVService.LatestTypeOfVersion, StatusProgress);
 
             OnPropertyChanged(nameof(CanInstall));
             OnPropertyChanged(nameof(CanUpdate));
