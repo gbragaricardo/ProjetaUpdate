@@ -88,8 +88,7 @@ namespace ProjetaUpdate.MVVM.ViewModels
                     OnPropertyChanged();
                     UpdateUiAndProps();
                     InstalledVersion = _vService.VerifyInstallAndVersion();
-                    _onlineVService.VersionCompare(_vService.InstalledTypeOfVersion, _onlineVService.LatestTypeOfVersion, StatusProgress);
-
+                    UpdateMessage();
                 }
             }
         }
@@ -214,6 +213,14 @@ namespace ProjetaUpdate.MVVM.ViewModels
             _onlineVService.UpdateProps();
         }
 
+        public async void UpdateMessage()
+        {
+            await _onlineVService.VersionCompare(_vService.InstalledTypeOfVersion, _onlineVService.LatestTypeOfVersion, StatusProgress);
+            (_canInstall, _canUpdate) = await _onlineVService.CompareResult(_vService.InstalledTypeOfVersion, _onlineVService.LatestTypeOfVersion);
+            OnPropertyChanged(nameof(CanInstall));
+            OnPropertyChanged(nameof(CanUpdate));
+        }
+
         public async void LoadVersions()
         {
             CanYearChange = false;
@@ -226,7 +233,7 @@ namespace ProjetaUpdate.MVVM.ViewModels
 
             UpdateUiAndProps();
             InstalledVersion = _vService.VerifyInstallAndVersion();
-            await _onlineVService.VersionCompare(_vService.InstalledTypeOfVersion, _onlineVService.LatestTypeOfVersion, StatusProgress);
+            UpdateMessage();
 
             OnPropertyChanged(nameof(CanInstall));
             OnPropertyChanged(nameof(CanUpdate));
