@@ -138,7 +138,7 @@
                             <!-- ProjetaHDR -->
 
                             <!-- ProjetaHDR -->
-                            <RadioButton Visibility="Hidden"
+                            <RadioButton Visibility="Visible"
                                          Content="PROJETA ARQ"
                                          Tag="ProjetaARQ"
                                          Style="{StaticResource MenuButtonTheme}"
