@@ -14,7 +14,7 @@ namespace ProjetaUpdate.MVVM.ViewModels
 
         private readonly VersionService _vService;
         private readonly OnlineVersionService _onlineVService;
-        public List<string> AvailableRevitVersions { get; } = new List<string> { "2024", "2022" };
+        public List<string> AvailableRevitVersions { get; } = new List<string> {"2026", "2024", "2022" };
         public IProgress<string> StatusProgress { get; }
 
 
