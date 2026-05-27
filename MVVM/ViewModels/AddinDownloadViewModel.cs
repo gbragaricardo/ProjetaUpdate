@@ -14,7 +14,7 @@ namespace ProjetaUpdate.MVVM.ViewModels
 
         private readonly VersionService _vService;
         private readonly OnlineVersionService _onlineVService;
-        public List<string> AvailableRevitVersions { get; } = new List<string> {"2026", "2024", "2022" };
+        public List<string> AvailableRevitVersions { get; } = new List<string> { "2026", "2025", "2024", "2023", "2022" };
         public IProgress<string> StatusProgress { get; }
 
 
@@ -76,7 +76,7 @@ namespace ProjetaUpdate.MVVM.ViewModels
         }
 
         //Versao do revit selecionada pelo usuario
-        private string _revitVersion = "2024";
+        private string _revitVersion = "2026";
         public string SelectedRevitVersion
         {
             get { return _revitVersion; }

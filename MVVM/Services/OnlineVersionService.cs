@@ -144,17 +144,28 @@ namespace ProjetaUpdate
                     {
                         JsonElement root = doc.RootElement;
 
-                        // Busca no array "assets" um arquivo .zip
+                        // Busca no array "assets" um arquivo .zip que corresponda à versão do Revit
                         if (root.TryGetProperty("assets", out JsonElement assetsArray))
                         {
-                            foreach (JsonElement asset in assetsArray.EnumerateArray())
+                            var assets = assetsArray.EnumerateArray().ToList();
+                            
+                            // 1. Tenta encontrar um ZIP que contenha o nome do addin e a versão do Revit (ex: ProjetaHDR_2026.zip)
+                            JsonElement? targetAsset = assets.Cast<JsonElement?>().FirstOrDefault(a => 
+                                a.Value.TryGetProperty("name", out JsonElement name) &&
+                                name.GetString().EndsWith(".zip", StringComparison.OrdinalIgnoreCase) &&
+                                name.GetString().Contains(SelectedRevitVersion));
+
+                            // 2. Fallback: se não encontrar, pega o primeiro ZIP que encontrar (comportamento antigo)
+                            if (targetAsset == null)
                             {
-                                if (asset.TryGetProperty("name", out JsonElement name) &&
-                                    name.GetString().EndsWith(".zip")) // Filtra apenas arquivos ZIP
-                                {
-                                    versionUrl = asset.GetProperty("browser_download_url").GetString();
-                                    break; // Para no primeiro ZIP encontrado
-                                }
+                                targetAsset = assets.Cast<JsonElement?>().FirstOrDefault(a =>
+                                    a.Value.TryGetProperty("name", out JsonElement name) &&
+                                    name.GetString().EndsWith(".zip", StringComparison.OrdinalIgnoreCase));
+                            }
+
+                            if (targetAsset != null)
+                            {
+                                versionUrl = targetAsset.Value.GetProperty("browser_download_url").GetString();
                             }
                         }
                     }
@@ -162,8 +173,8 @@ namespace ProjetaUpdate
                     // Verifica se conseguiu obter o link do ZIP
                     if (string.IsNullOrEmpty(versionUrl))
                     {
-                        Debug.WriteLine("Nenhum arquivo ZIP encontrado na release.");
-                        await DelayMessage(statusProgress, "Erro: Nenhum arquivo ZIP encontrado.");
+                        Debug.WriteLine("Nenhum arquivo ZIP compatível encontrado na release.");
+                        await DelayMessage(statusProgress, "Erro: Arquivo ZIP não encontrado.");
                         return;
                     }
 
@@ -187,10 +198,26 @@ namespace ProjetaUpdate
 
                 ZipFile.ExtractToDirectory(tempZipPath, tempExtractPath);
 
-                // Encontra a pasta correta dentro do ZIP extraído
-                string[] extractedDirs = Directory.GetDirectories(tempExtractPath);
+                // --- Lógica de Busca Inteligente ---
+                // 1. Tenta encontrar uma pasta com o nome da versão do Revit (ex: "2026") em qualquer lugar do ZIP
+                string versionDir = Directory.GetDirectories(tempExtractPath, SelectedRevitVersion, SearchOption.AllDirectories).FirstOrDefault();
+                
+                // Define onde vamos começar a procurar os arquivos do addin
+                // Se achou a pasta "2026", procuramos dentro dela. Se não, procuramos no ZIP todo.
+                string searchRoot = versionDir ?? tempExtractPath;
 
-                string extractedAddinPath = Array.Find(extractedDirs, dir => Path.GetFileName(dir) == AddinName);
+                // 2. Encontra a pasta do Addin (ex: "ProjetaHDR")
+                string extractedAddinPath = Directory.GetDirectories(searchRoot, AddinName, SearchOption.AllDirectories).FirstOrDefault();
+
+                // 3. Localiza o arquivo .addin
+                string addinFile = Directory.GetFiles(searchRoot, "*.addin", SearchOption.AllDirectories).FirstOrDefault();
+
+                // Caso especial: Se a pasta da versão (ex: "2026") contiver os arquivos diretamente 
+                // e não uma subpasta com o nome do addin
+                if (extractedAddinPath == null && versionDir != null)
+                {
+                    extractedAddinPath = versionDir;
+                }
 
                 if (extractedAddinPath == null)
                 {
@@ -209,7 +236,8 @@ namespace ProjetaUpdate
                 }
 
                 // Se o addin antiga existir, Excluir"
-                string existingAddinFilePath = Directory.GetFiles(_revitAddinPath,"*.addin").FirstOrDefault();
+                string expectedAddinFileName = $"{AddinName}.addin";
+                string existingAddinFilePath = Path.Combine(_revitAddinPath, expectedAddinFileName);
 
                 if (File.Exists(existingAddinFilePath))
                 {
@@ -218,12 +246,10 @@ namespace ProjetaUpdate
                     File.Delete(existingAddinFilePath);
                 }
 
-                // Localiza o arquivo .addin dentro do diretório extraído
-                string addinFile = Directory.GetFiles(extractedAddinPath, "*.addin").FirstOrDefault();
-
                 if (addinFile == null)
                 {
                     Console.WriteLine("Arquivo .addin nao encontrado");
+                    await DelayMessage(statusProgress, "Erro: Arquivo .addin não encontrado.");
                     return;
                 }
                 
@@ -234,6 +260,9 @@ namespace ProjetaUpdate
                 // Move a nova versão para o diretório do Revit Addins
                 Console.WriteLine("Instalando nova versão...");
                 await DelayMessage(statusProgress, "Instalando nova versão...");
+                
+                // Se a pasta extraída não tiver o nome correto (ex: era a pasta "2026"), 
+                // o Directory.Move vai renomeá-la para o nome do Addin ao mover
                 Directory.Move(extractedAddinPath, MyAddinPath);
 
                 // Limpeza de arquivos temporários
