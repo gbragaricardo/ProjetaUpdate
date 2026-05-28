@@ -79,7 +79,7 @@ jobs:
         prerelease: false
         files: |
           Deployment/Releases/RELEASES
-          Deployment/Releases/*.nupkg
+          Deployment/Releases/*${{ env.VERSION }}*.nupkg
           Deployment/Releases/Setup.exe
           Deployment/Releases/Setup.msi
       env:
