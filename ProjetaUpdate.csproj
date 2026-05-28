@@ -236,22 +236,37 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterBuild">
+    <Message Importance="high" Text="--- Log AfterBuild: Iniciando ---" />
     <ItemGroup>
       <NugetTools Include="$(SolutionDir)packages\NuGet.CommandLine.*\tools\NuGet.exe" />
       <SquirrelTools Include="$(SolutionDir)packages\squirrel.windows.*\tools\Squirrel.exe" />
     </ItemGroup>
+    <Message Importance="high" Text="Log AfterBuild: NugetTools = @(NugetTools)" />
+    <Message Importance="high" Text="Log AfterBuild: SquirrelTools = @(SquirrelTools)" />
+    
     <Copy SourceFiles="@(SquirrelTools->'%(FullPath)')" DestinationFiles="$(OutDir)..\Update.exe" Condition="!Exists('$(OutDir)..\Update.exe')" />
+    
     <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
       <Output TaskParameter="Assemblies" ItemName="assemblyInfo" />
     </GetAssemblyIdentity>
+    
     <PropertyGroup>
       <Version>$([System.Version]::Parse(%(assemblyInfo.Version)).ToString(3))</Version>
       <NuspecFile>$(SolutionDir)ReleaseSpec.nuspec</NuspecFile>
     </PropertyGroup>
+    
+    <Message Importance="high" Text="Log AfterBuild: Versão detectada = $(Version)" />
+    <Message Importance="high" Text="Log AfterBuild: Caminho Nuspec = $(NuspecFile)" />
+
     <XmlPeek XmlInputPath="$(NuspecFile)" Query="/package/metadata/id/text()">
       <Output TaskParameter="Result" ItemName="ID" />
     </XmlPeek>
+    
+    <Message Importance="high" Text="Log AfterBuild: ID do Plugin = @(ID)" />
+    <Message Importance="high" Text="Log AfterBuild: Configuração = $(Configuration)" />
+
     <Exec Condition=" '$(Configuration)' == 'Release'" Command="@(NugetTools->'%(FullPath)') pack $(NuspecFile) -Version $(Version) -Properties Configuration=Release -OutputDirectory $(SolutionDir)Deployment\GeneratedNugets" />
     <Exec Condition=" '$(Configuration)' == 'Release'" Command="@(SquirrelTools->'%(FullPath)') --releasify $(SolutionDir)Deployment\GeneratedNugets\@(ID).$(Version).nupkg --releaseDir=$(SolutionDir)Deployment\Releases --setupIcon=$(SolutionDir)Resources\Setup.ico" />
+    <Message Importance="high" Text="--- Log AfterBuild: Finalizado ---" />
   </Target>
 </Project>
