@@ -1,0 +1,79 @@
+name: Build and Release ProjetaUpdate
+
+on:
+  push:
+    tags:
+      - '*.*.*' # Dispara para tags no formato 1.0.0 ou v1.0.0
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1
+
+    - name: Restore NuGet packages
+      run: nuget restore ProjetaUpdate.sln
+
+    - name: Get Version from Tag
+      id: get_version
+      run: |
+        $tag = "${{ github.ref_name }}"
+        $version = $tag.TrimStart('v')
+        echo "VERSION=$version" >> $env:GITHUB_ENV
+        echo "version=$version" >> $env:GITHUB_OUTPUT
+
+    - name: Update AssemblyInfo Version
+      run: |
+        $version = "${{ env.VERSION }}"
+        $assemblyPath = "Properties/AssemblyInfo.cs"
+        (Get-Content $assemblyPath) -replace '\[assembly: AssemblyVersion\(".*"\)\]', "[assembly: AssemblyVersion(""$version"")]" | Set-Content $assemblyPath
+        (Get-Content $assemblyPath) -replace '\[assembly: AssemblyFileVersion\(".*"\)\]', "[assembly: AssemblyFileVersion(""$version"")]" | Set-Content $assemblyPath
+
+    - name: Download Previous Release Artifacts (for deltas)
+      id: download_previous
+      shell: pwsh
+      run: |
+        try {
+          $latestRelease = Invoke-RestMethod -Uri "https://api.github.com/repos/${{ github.repository }}/releases/latest"
+          $releaseDir = "Deployment/Releases"
+          if (!(Test-Path $releaseDir)) { New-Item -ItemType Directory -Path $releaseDir }
+          
+          foreach ($asset in $latestRelease.assets) {
+            if ($asset.name -eq "RELEASES" -or $asset.name -like "*-full.nupkg") {
+              $downloadUrl = $asset.browser_download_url
+              echo "Downloading $downloadUrl"
+              Invoke-WebRequest -Uri $downloadUrl -OutFile "$releaseDir/$($asset.name)"
+            }
+          }
+        } catch {
+          Write-Host "No previous release found or error downloading. Skipping delta preparation."
+        }
+
+    - name: Build and Releasify
+      run: msbuild ProjetaUpdate.sln /p:Configuration=Release /p:Platform="AnyCPU"
+
+    - name: Create GitHub Release
+      id: create_release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ github.ref }}
+        name: Release ${{ env.VERSION }}
+        draft: false
+        prerelease: false
+        files: |
+          Deployment/Releases/RELEASES
+          Deployment/Releases/*.nupkg
+          Deployment/Releases/Setup.exe
+          Deployment/Releases/Setup.msi
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
