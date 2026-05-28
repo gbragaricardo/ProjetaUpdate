@@ -59,8 +59,13 @@ jobs:
           Write-Host "No previous release found or error downloading. Skipping delta preparation."
         }
 
+    - name: Create Deployment Directories
+      run: |
+        mkdir Deployment/GeneratedNugets -Force
+        mkdir Deployment/Releases -Force
+
     - name: Build and Releasify
-      run: msbuild ProjetaUpdate.sln /p:Configuration=Release /p:Platform="AnyCPU"
+      run: msbuild ProjetaUpdate.sln /p:Configuration=Release /p:Platform="Any CPU" /verbosity:normal
 
     - name: Create GitHub Release
       id: create_release
