@@ -8,6 +8,8 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    permissions:
+      contents: write # Necessário para criar a release e subir arquivos
 
     steps:
     - name: Checkout repository
