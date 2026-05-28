@@ -209,8 +209,14 @@ namespace ProjetaUpdate
                 // 2. Encontra a pasta do Addin (ex: "ProjetaHDR")
                 string extractedAddinPath = Directory.GetDirectories(searchRoot, AddinName, SearchOption.AllDirectories).FirstOrDefault();
 
-                // 3. Localiza o arquivo .addin
-                string addinFile = Directory.GetFiles(searchRoot, "*.addin", SearchOption.AllDirectories).FirstOrDefault();
+                // 3. Localiza o arquivo .addin (Prioriza o que tem o nome do addin)
+                string addinFile = Directory.GetFiles(searchRoot, $"{AddinName}.addin", SearchOption.AllDirectories).FirstOrDefault();
+                
+                // Fallback: se não encontrar com o nome exato, pega o primeiro .addin que aparecer na pasta da versão
+                if (addinFile == null)
+                {
+                    addinFile = Directory.GetFiles(searchRoot, "*.addin", SearchOption.AllDirectories).FirstOrDefault();
+                }
 
                 // Caso especial: Se a pasta da versão (ex: "2026") contiver os arquivos diretamente 
                 // e não uma subpasta com o nome do addin
